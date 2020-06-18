@@ -37,3 +37,9 @@ https://slate.com/news-and-politics/2010/06/into-thin-error-mountaineer-ed-viest
 **天才** Ueli Stechが死んだときに僕はそう思うようになった。
 https://www.youtube.com/watch?v=VUWBbepsdmY  
 
+
+## 日本人の｢給料安すぎ問題｣の意外すぎる悪影響
+https://toyokeizai.net/articles/-/357011?page=4　　
+　　
+「300円の牛丼が美味しいから日本人は幸せ」みたいな論法を聞くと、この記事に書いてあるような気持ちがむくむく湧いてくる。
+**monopsony**という言葉は覚えておこうと思った。
