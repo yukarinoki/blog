@@ -1,9 +1,9 @@
 module.exports = {
   siteMetadata: {
-    title: `面接のためのTest Blog`,
+    title: `Yukarinoki's Blog`,
     author: {
-      name: `Naosuke Shindo`,
-      summary: `gatsby + netlify`
+      name: `yukarinoki`,
+      summary: `iroiro, gatsby + netlify`
     },
     description: `none`,
     siteUrl: `https://epic-golick-eb81d7.netlify.app/`,
