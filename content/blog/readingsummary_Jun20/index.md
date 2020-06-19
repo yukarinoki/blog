@@ -43,3 +43,9 @@ https://toyokeizai.net/articles/-/357011?page=4　     　
     
 「300円の牛丼が美味しいから日本人は幸せ」みたいな論法を聞くと、この記事に書いてあるような気持ちがむくむく湧いてくる。
 **monopsony**という言葉は覚えておこうと思った。
+
+
+# console.mihai()
+**Firefoxのコンソールを立ち上げ（F12）console.mihai()と入力すると表示される**URLから読める。  
+
+泣いた
