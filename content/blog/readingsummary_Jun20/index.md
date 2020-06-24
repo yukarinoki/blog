@@ -49,3 +49,8 @@ https://toyokeizai.net/articles/-/357011?page=4　     　
 **Firefoxのコンソールを立ち上げ（F12）console.mihai()と入力すると表示される**URLから読める。  
 
 泣いた
+
+# ライフタイムで参照を検証する
+https://doc.rust-jp.rs/book/second-edition/ch10-03-lifetime-syntax.html  
+   
+Rustを理解中。ライフタイムみたいな概念は初めて知ったが、C++で構造体・クラスにポインタを入れるときには「このポインタがいつまでもつかちゃんと管理し続けられるのかな・・・」と毎回思っていた。C++はそれを何とかする設計じゃないのでお腹に力をいれて書いていたけど、Rustなら安心できそう。  
