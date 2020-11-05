@@ -12,7 +12,7 @@ per cpu variableはその名前の通りCPU Coreごとの変数です。
 coreごとの変数を用いないとキャッシュが汚れてしまうのでパフォーマンスが大幅に低下します。
 この点から、linux kernelでは多くのper cpu variableが使われています。
 
-有名なper cpu variableとして、バディシステムにおけるper_cpu_pagesなどが挙げられます。
+有名なper cpu variableとして、バディシステムにおけるper\_cpu\_pagesなどが挙げられます。
 
 # Per cpu variableの配置
 linuxはC, asm, ldsで書かれています。ちなみにCのstandard内だけで書くことはできません。このldsとはリンカスクリプトです、linuxはvmlinuxという形に実行形式をまとめますが、そのときのdataやtextなどのセクションの位置を記述しています。
@@ -23,7 +23,7 @@ https://elixir.bootlin.com/linux/v5.9.4/source/include/asm-generic/sections.h#L4
 ```/include/asm-generic/sections.h
 extern char __per_cpu_load[], __per_cpu_start[], __per_cpu_end[];
 ```
-こうして配置されたメモリ、data.per_cpu_area セクションがkernel起動時に初期化されます。  
+こうして配置されたメモリ、data.per\_cpu\_area セクションがkernel起動時に初期化されます。  
 https://elixir.bootlin.com/linux/latest/source/arch/x86/kernel/setup_percpu.c#L168  
 ```/arch/x86/kernel/setup_percpu.c
 void __init setup_per_cpu_areas(void) {
@@ -125,7 +125,7 @@ int main(){
 という可能性があります。
 
 ## RELOC_HIDE
-以上の問題を解決するためにRELOC_HIDE()があります。
+以上の問題を解決するためにRELOC\_HIDE()があります。
 https://elixir.bootlin.com/linux/v4.18/source/include/linux/compiler-gcc.h#L50
 ```include/linux/compiler-gcc.h
 #define RELOC_HIDE(ptr, off)						\
@@ -160,7 +160,7 @@ __asm__ (
 1. asm templeteに記述されたasm code
 だけをやってくれます。
 
-出力入力レジスタに制約というアノテーションをつけることもでき、RELOC_HIDE()の場合では
+出力入力レジスタに制約というアノテーションをつけることもでき、RELOC\_HIDE()の場合では
 ```
 "=r" = は読み込み専用、rはどのレジスタでもいいという意味
 "0"  0 は出力レジスタの0番目にこの変数を入れる
