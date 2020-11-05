@@ -16,16 +16,15 @@ coreごとの変数を用いないとキャッシュが汚れてしまうので�
 
 # Per cpu variableの配置
 linuxはC, asm, ldsで書かれています。ちなみにCのstandard内だけで書くことはできません。このldsとはリンカスクリプトです、linuxはvmlinuxという形に実行形式をまとめますが、そのときのdataやtextなどのセクションの位置を記述しています。
-per cpu variableはldsによって配置されアドレスは固定されています。
-https://elixir.bootlin.com/linux/latest/source/arch/x86/kernel/setup_percpu.c#L168
-/arch/x86/kernel/vmlinux.lds.S  
-/include/asm-generic/vmlinux.lds.h  
-https://elixir.bootlin.com/linux/v5.9.4/source/include/asm-generic/sections.h#L42 
-に該当部の記述があります。
+per cpu variableはldsによって配置されアドレスは固定されています。  
+/arch/x86/kernel/vmlinux.lds.S    
+/include/asm-generic/vmlinux.lds.h    
+https://elixir.bootlin.com/linux/v5.9.4/source/include/asm-generic/sections.h#L42   
 ```/include/asm-generic/sections.h
 extern char __per_cpu_load[], __per_cpu_start[], __per_cpu_end[];
 ```
-こうして配置されたメモリ、data.per_cpu_area セクションがkernel起動時に初期化されます。
+こうして配置されたメモリ、data.per_cpu_area セクションがkernel起動時に初期化されます。  
+https://elixir.bootlin.com/linux/latest/source/arch/x86/kernel/setup_percpu.c#L168  
 ```/arch/x86/kernel/setup_percpu.c
 void __init setup_per_cpu_areas(void) {
 ~~
