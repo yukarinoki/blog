@@ -64,7 +64,7 @@ per cpu variableは以下のような構造になっています。このCPU 0, 
 このような実装はChristophさんの考案です。  
 参考: https://lwn.net/Articles/258238/
 
-![per_cpu_var.png](./per_cpu_var.png)
+![pcv](./per_cpu_var.png)
 
 # RELOC_HIDE()
 ##  offset加算の問題点
