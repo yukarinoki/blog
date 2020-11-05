@@ -3,7 +3,7 @@ module.exports = {
     title: `Yukarinoki's Blog`,
     author: {
       name: `yukarinoki`,
-      summary: `iroiro, gatsby + netlify`
+      summary: ``
     },
     description: `none`,
     siteUrl: `https://epic-golick-eb81d7.netlify.app/`,
