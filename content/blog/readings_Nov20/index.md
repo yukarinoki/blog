@@ -23,7 +23,7 @@ https://arxiv.org/abs/0712.1320
 https://www.ibm.com/developerworks/jp/linux/library/l-gcc-hacks/  
 
 gcc拡張について書いてある。知らないものがいくつもあった。例えば、switchの範囲指定。
-```
+```c
 char calcGradeByScore(int score){
   switch(score) {
   case 0 ... 49:

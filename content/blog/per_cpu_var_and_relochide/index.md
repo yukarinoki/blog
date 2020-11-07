@@ -20,12 +20,12 @@ per cpu variableはldsによって配置されアドレスは固定されてい�
 /arch/x86/kernel/vmlinux.lds.S    
 /include/asm-generic/vmlinux.lds.h    
 https://elixir.bootlin.com/linux/v5.9.4/source/include/asm-generic/sections.h#L42   
-```/include/asm-generic/sections.h
+```clike:title=/include/asm-generic/sections.h
 extern char __per_cpu_load[], __per_cpu_start[], __per_cpu_end[];
 ```
 こうして配置されたメモリ、data.per\_cpu\_area セクションがkernel起動時に初期化されます。  
 https://elixir.bootlin.com/linux/latest/source/arch/x86/kernel/setup_percpu.c#L168  
-```/arch/x86/kernel/setup_percpu.c
+```c:title=/arch/x86/kernel/setup_percpu.c
 void __init setup_per_cpu_areas(void) {
 ~~
 for_each_possible_cpu(cpu) {
@@ -82,7 +82,7 @@ per cpu variableは以下のような構造になっています。このCPU 0, 
 ここで、上の操作は ptri = ptr0 + offsetなわけですが、**このoffsetの加算は確実にptr0の指し示している構造体のサイズを超えています。 この構造体の範囲を超えるptrの加算がUBになります。**
 
 例を示します。
-```example
+```c:title=example1.c
 struct person {            
     char name[20];        
     int age;                
@@ -103,7 +103,7 @@ int main(){
 ただ、上のコードのように動く場合もあります。しかし、UBは「コンパイラがどう処理しても構わない」ということなので、UBを発見次第、「なのはちゃんの全力全開！」と出力してコンパイルを停止するという動作もコンパイラの裁量の範囲内になります。（ほんとか？）  
 
 具体的には、
-```
+```c
 struct person {            
     char name[20];        
     int age;                
@@ -112,14 +112,13 @@ int main(){
   struct person A={"Nanoha", 8}, B={"Fate", 9};
   struct person *ptr = &A; 
   if(ptr + offset > 0 && ptr + offset < ptr + sizeof(struct person)){
-    .....
+    ~~~~~
   }
   /*
   * ptr + offset > 0 && ptr + offset < ptr + sizeof(struct person)
   * は最適化によって、ptr + offset > 0に変換される可能性がある。
   * ptrに何を足してもその構造体のサイズを超えることがないと仮定されるため。
   */
-  
 }
 ```
 という可能性があります。
@@ -127,7 +126,7 @@ int main(){
 ## RELOC_HIDE
 以上の問題を解決するためにRELOC\_HIDE()があります。
 https://elixir.bootlin.com/linux/v4.18/source/include/linux/compiler-gcc.h#L50
-```include/linux/compiler-gcc.h
+```c:title=include/linux/compiler-gcc.h
 #define RELOC_HIDE(ptr, off)						\
 ({									\
 	unsigned long __ptr;						\
@@ -140,7 +139,7 @@ https://elixir.bootlin.com/linux/v4.18/source/include/linux/compiler-gcc.h#L50
 そもそも、この拡張インラインアセンブリが読めないかもしれないので解説します。  
 分かりやすい解説: http://caspar.hazymoon.jp/OpenBSD/annex/gcc_inline_asm.html　
 
-```
+```c
 __asm__ (
           "" :          // asm template, asmのコード
           "=r"(__ptr) : // 出力レジスタ(カッコ内は対応する変数)
@@ -168,8 +167,8 @@ __asm__ (
 
 を意味しています。
 
-## RELOC HIDEのやっていること
-```include/linux/compiler-gcc.h
+## RELOC HIDEがやっていること
+```c:title=include/linux/compiler-gcc.h
 #define RELOC_HIDE(ptr, off)						\
 ({									\
 	unsigned long __ptr;						\
@@ -194,9 +193,10 @@ __ptr = ptr
 をやっているだけなんですね。
 あとは、\_\_にoffsetを足して返すだけ。
 
-これは一見なんの意味もなさそうですが、**アセンブリを介すことによってコンパイラのoptimizerに\_\_ptrがptrと同じ構造体のポインタであることを隠すことができます。** **それによって、コンパイラはどんなサイズの構造体のポインタかわからず、offsetを足しても構造体のサイズ内なのかもしれないと考えてコード除去をすることができなくなります。**
+これは一見なんの意味もなさそうですが、  
+**アセンブリを介すことによってコンパイラのoptimizerに\_\_ptrがptrと同じ構造体のポインタであることを隠すことができます。** それによって、コンパイラはどんなサイズの構造体のポインタかわからず、offsetを足しても構造体のサイズ内なのかもしれないと考えてコード除去をすることができなくなります。
 
 以上が RELOC_HIDE()の意味になります。
 
 # 最後に
-日本語で解説されているものがなかったので書きました。
+日本語で解説されているものがなかったので書きました。このptrの加算はアップキャストと似たようなもやっと感がありますね。こういうコードがほとんどのハードウェアの上でちゃんと動作するのはすごいことだと思いました。
