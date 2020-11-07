@@ -1,31 +1,31 @@
 /**
  * Main color
  */
-export const mainColor = {
-    light: "#d6e2fb",
-    normal: "#2c91ec",
-    dark: "#25476f",
+export const subColor = {
+    light: "#EDF2BD",
+    normal: "#ED8A4F",
+    dark: "#743f1e",
   }
   
   /**
    * sub color
    */
-  export const subColor = {
-    light: "#efb1ff",
-    normal: "#7f78d2",
-    dark: "#481380",
+  export const mainColor = {
+    light: "#95d8c7",
+    normal: "#166e77",
+    dark: "#10363B",
   }
   
   /**
    * Gray color
    */
   export const grayColor = {
-    lightest: "#f8f9fa",
-    lighter: "#e5e5e6",
-    light: "#d1d1d2",
-    normal: "#bebfbf",
-    dark: "#979798",
-    darker: "#6f6f70",
-    darkest: "#484949",
-    black: "#212122",
+    lightest: "#f3f0f3",
+    lighter: "#e8e2e8",
+    light: "#d2c5d1",
+    normal: "#c7b7c5",
+    dark: "#b19aae",
+    darker: "#90708c",
+    darkest: "#3b3c3c",
+    black: "#202329",
   }

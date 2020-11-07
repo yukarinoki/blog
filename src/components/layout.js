@@ -8,20 +8,20 @@ import { rhythm, scale } from "../utils/typography"
 
 const GlobalStyle = createGlobalStyle`
   :root {
-    --bg-color: white;
-    --bg-light-color: ${grayColor.lightest};
-    --fg-color: hsl(0, 0%, 0%, 0.8);
-    --fg-demisub-color: hsl(0, 0%, 0%, 0.65);
-    --fg-sub-color: hsl(0, 0%, 0%, 0.5);
-    --fg-link-color: ${mainColor.normal};
-    --fg-link-visited-color: ${subColor.normal};
+    --bg-color: ${grayColor.black};
+    --bg-light-color: ${grayColor.darkest};
+    --fg-color: hsl(0, 100%, 100%, 0.9);
+    --fg-demisub-color: hsl(0, 100%, 100%, 0.78);
+    --fg-sub-color: hsl(0, 100%, 100%, 0.65);
+    --fg-link-color: ${subColor.normal};
+    --fg-link-visited-color: ${subColor.light};
     @media (prefers-color-scheme: dark) {
       --bg-color: ${grayColor.black};
       --bg-light-color: ${grayColor.darkest};
       --fg-color: hsl(0, 100%, 100%, 0.9);
       --fg-demisub-color: hsl(0, 100%, 100%, 0.78);
       --fg-sub-color: hsl(0, 100%, 100%, 0.65);
-      --fg-link-color: ${mainColor.light};
+      --fg-link-color: ${subColor.normal};
       --fg-link-visited-color: ${subColor.light};
     }
   }
