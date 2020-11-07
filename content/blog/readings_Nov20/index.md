@@ -17,3 +17,25 @@ Aaronsonが書いている。連続体仮説の独立性の証明。GedelとCohe
 A beginner's guide to forcing  
 Timothy Y. Chow  
 https://arxiv.org/abs/0712.1320
+
+
+## Linux カーネルのなかに入り込む GCC
+https://www.ibm.com/developerworks/jp/linux/library/l-gcc-hacks/  
+
+gcc拡張について書いてある。知らないものがいくつもあった。例えば、switchの範囲指定。
+```
+char calcGradeByScore(int score){
+  switch(score) {
+  case 0 ... 49:
+    return 'F';
+  case 50 ... 69:
+    return 'C';
+  case 70 ... 80:
+    return 'B';
+  case 80 ... 100:
+    return 'A';
+  default:
+    return 'X';
+  }
+}
+```
