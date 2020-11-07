@@ -39,3 +39,8 @@ char calcGradeByScore(int score){
   }
 }
 ```
+
+## Deprecated scp
+https://lwn.net/SubscriberLink/835962/ae41b27bc20699ad/
+
+scpにはちょっとした脆弱性があって、deprecatedになるらしい。ifconfigは実はdeprecatedなのはそれなりに有名な話？scpもifconfigも手癖で使う人が多いから置換するのは難しそう。あと、直感的に使えて便利だからなぁ。
