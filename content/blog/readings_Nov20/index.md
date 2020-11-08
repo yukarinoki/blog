@@ -44,3 +44,9 @@ char calcGradeByScore(int score){
 https://lwn.net/SubscriberLink/835962/ae41b27bc20699ad/
 
 scpにはちょっとした脆弱性があって、deprecatedになるらしい。ifconfigは実はdeprecatedなのはそれなりに有名な話？scpもifconfigも手癖で使う人が多いから置換するのは難しそう。あと、直感的に使えて便利だからなぁ。
+
+# Loving twins Bitterly Divided by Politics 
+ https://www.nytimes.com/2020/11/04/opinion/2020-election-trump-family.html　　
+
+兄弟がトランプサポーターである(民主党支持の)記者が書いた文章。いい文章だと思う。こういうことがアメリカで沢山起きているんだろうなという話だった。twitterは良くない呟きにノーテーションつけるよりも、違う政治的考えの呟きをサジェスチョンする試みをした方が良いと思う。政治的な分断はアルゴリズムから生み出されている側面もあると思う。
+共和党支持者には、健康保険に加入できていない人も多い。ギリギリで作り上げられた「今」の生活を守るために、変化をもたらす民主党が嫌悪されるのはその通りなのかもしれない。排他的で属性の違う人を排除することは変化を恐れる心情から生まれているのだと思う。
