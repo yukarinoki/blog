@@ -3,9 +3,6 @@ title: per_cpu_variableとRELOC_HIDE()
 date: "2020-11-06T05:12:03.284Z"
 description: "per_cpu_variableとRELOC_HIDE()の解説です"
 ---
-
-### 注意
-プログラム内のコードは解説のための疑似コードであり、動きません。
 # Per cpu variable
 linux kernelには、per cpu variableという機構があります。
 per cpu variableはその名前の通りCPU Coreごとの変数です。
@@ -13,6 +10,8 @@ coreごとの変数を用いないとキャッシュが汚れてしまうので�
 この点から、linux kernelでは多くのper cpu variableが使われています。
 
 有名なper cpu variableとして、バディシステムにおけるper\_cpu\_pagesなどが挙げられます。
+
+**注意: プログラム内のコードは解説のための疑似コードであり、動きません**
 
 # Per cpu variableの配置
 linuxはC, asm, ldsで書かれています。ちなみにCのstandard内だけで書くことはできません。このldsとはリンカスクリプトです、linuxはvmlinuxという形に実行形式をまとめますが、そのときのdataやtextなどのセクションの位置を記述しています。
