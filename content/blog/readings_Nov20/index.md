@@ -9,7 +9,13 @@ description: ""
 https://mathlog.info/articles/279
 このサイト、画像の大きさが変更できない？
 
+## A complete React with GraphQL Tutorial
+https://www.robinwieruch.de/react-with-graphql-tutorial/  
+
+GraphQLをまともに触ったこともなかった。これをみた上で、このブログもtable of contentsをつけた。
+
 # 読んだもの
+
 
 ## The Complete Idiot’s Guide to the Independence of the Continuum Hypothesis: Part 1 of <=Aleph_0
 https://www.scottaaronson.com/blog/?p=4974  
