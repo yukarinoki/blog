@@ -6,7 +6,7 @@ import { rhythm, scale } from "../utils/typography"
 
 const ArticleInner = ({ className, post }) => {
     return (
-        <article className={className}>
+        <article class={className}>
           <header>
             <h1>{post.frontmatter.title}</h1>
             <p>
