@@ -130,6 +130,13 @@ const LayoutStyle = styled.div`
     padding: ${rhythm(1)};
     background-color: var(--bg-color);
     color: var(--fg-color);
+    box-shadow:
+      0 1.9px 2.5px rgba(0, 0, 0, 0.057),
+      0 5px 6.1px rgba(0, 0, 0, 0.076),
+      0 10.1px 11.4px rgba(0, 0, 0, 0.086),
+      0 19.2px 19.8px rgba(0, 0, 0, 0.092),
+      0 38.4px 34.8px rgba(0, 0, 0, 0.1),
+      0 101px 74px rgba(0, 0, 0, 0.13);
   }
   & > div:nth-of-type(2) {
     grid-area: right;
