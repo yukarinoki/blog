@@ -36,15 +36,7 @@ const BioInner = ({ className }) => {
 
   const { author, social } = data.site.siteMetadata
   return (
-    <div classname={className}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        padding: `rhythm(0.5) rhythm(0.25)`,
-        fontStyle: "italic",
-        color: "#CCCCCC",
-      }}
-    >
+    <div class={className}>
       <a 
        href={`https://twitter.com/${social.twitter}`}
        target="_blank"
@@ -83,7 +75,15 @@ align-items: center;
 padding: ${rhythm(0.5)} ${rhythm(0.25)};
 font-style: italic;
 color: var(--fg-demisub-color);
+border-radius: ${rhythm(0.5)};
 ${scale(-3 / 8)};
+box-shadow:
+  0 1.9px 2.5px rgba(0, 0, 0, 0.057),
+  0 5px 6.1px rgba(0, 0, 0, 0.076),
+  0 10.1px 11.4px rgba(0, 0, 0, 0.086),
+  0 19.2px 19.8px rgba(0, 0, 0, 0.092),
+  0 38.4px 34.8px rgba(0, 0, 0, 0.1),
+  0 101px 74px rgba(0, 0, 0, 0.13);
 & > a {
   line-height: 0;
 }
