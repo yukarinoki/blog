@@ -4,7 +4,7 @@ import { rhythm, scale } from "../utils/typography"
 
 const TOCInner = ({ className, tocitems }) => {
     return (
-        <div class={className} dangerouslySetInnerHTML={{__html: tocitems}} />
+        <nav class={className} dangerouslySetInnerHTML={{__html: tocitems}} />
     )
 }
 
@@ -19,6 +19,7 @@ background-color: #202329;
 border-radius: ${rhythm(0.5)};
 color: var(--fg-demisub-color);
 ${scale(-3 / 8)};
+align-self: baseline;
 box-shadow:
   0 1.9px 2.5px rgba(0, 0, 0, 0.057),
   0 5px 6.1px rgba(0, 0, 0, 0.076),
