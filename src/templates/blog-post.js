@@ -14,7 +14,7 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
   const { previous, next } = pageContext
 
   return (
-    <Layout location={location} title={siteTitle} rightSide={<> <Bio/> <TOC tocitems={data.markdownRemark.tableOfContents}/> </>}>
+    <Layout location={location} title={siteTitle} rightSide={data.markdownRemark.tableOfContents === "" ? (<Bio/>) : (<> <Bio/> <TOC tocitems={data.markdownRemark.tableOfContents}/> </>)}>
       <SEO
         title={post.frontmatter.title}
         description={post.frontmatter.description || post.excerpt}
