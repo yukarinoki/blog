@@ -9,6 +9,7 @@ const TOCInner = ({ className, tocitems }) => {
 }
 
 const TOC = styled(TOCInner)`
+top: 0px;
 padding: ${rhythm(0.5)} ${rhythm(0.25)};
 padding-top: ${rhythm(0.5)};
 margin-top: ${rhythm(0.5)};
