@@ -5,6 +5,11 @@ description: ""
 ---
 
 # やったこと
+## VRChat UDON
+VRChatのWorldが作りたいので、UDONを学習した。（参考:https://qiita.com/amamagi/items/ac497db1b20cb754a1e6)
+ここに書いてあるような方法ではとてもじゃないけど一定以上のリッチなinteractionを持ったワールドを作ることができないので、UDON# (略称：U#)を用いるしかなさそうである・・・。
+
+U#とは、C#をUDONの機能にコンパイルしてくれるプラグイン。
 
 
 # 読んだもの
