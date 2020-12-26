@@ -11,7 +11,7 @@ VRChatのWorldが作りたいので、UDONを学習した。（参考:https://qi
 
 U#とは、C#をUDONの機能にコンパイルしてくれるプラグイン。
 
-U# 入門 ①（by ハツェ）
+U# 入門 ①（by ハツェ氏）
 https://hatuxes.hatenablog.jp/entry/2020/04/05/013310
 
 を読めば大体のことはわかりそう。読むかな。
