@@ -21,11 +21,11 @@ https://hatuxes.hatenablog.jp/entry/2020/04/05/013310
 ## Blenderでキャラクターモデリング
 VRChatのAvatarは以前友人に作ってもらったものがあるんですが、やっぱり自分で作ったほうが愛着が湧くし、上の事もあって自分でモデリングする作業がどこかで必要になるので、練習ついでにキャラクターモデリングをしてみることにしました。
 
-以下の動画がわかりやすく参考にしています。
-【Blender 2.9 Tutorial】キャラクターモデリング解説 #1 -Character Modeling Tutorial #1
-https://youtu.be/BBtgjTiL1XQ
+以下の動画がわかりやすく参考にしています。  
+【Blender 2.9 Tutorial】キャラクターモデリング解説 #1 -Character Modeling Tutorial #1  
+https://youtu.be/BBtgjTiL1XQ  
 
-モデリングの学習ができればよかったんですが、副産物としてアニメキャラの基本的な造形についても詳しくなれて良いです。
+モデリングの学習ができればよかったんですが、副産物としてアニメキャラの基本的な造形についても詳しくなれて良いです。  
 以下が#1の動画を見終わったあとの、途中経過です。  
 
 ![model1](./model1.png)
