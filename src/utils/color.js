@@ -3,7 +3,7 @@
  */
 export const subColor = {
     light: "#EDF2BD",
-    normal: "#ED8A4F",
+    normal: "#0053d6",
     dark: "#743f1e",
   }
   
@@ -12,8 +12,8 @@ export const subColor = {
    */
   export const mainColor = {
     light: "#95d8c7",
-    normal: "#166e77",
-    dark: "#10363B",
+    normal: "#14234b",
+    dark: "#FFE6F0",
   }
   
   /**
@@ -26,6 +26,11 @@ export const subColor = {
     normal: "#c7b7c5",
     dark: "#b19aae",
     darker: "#90708c",
-    darkest: "#3b3c3c",
-    black: "#202329",
+    darkest: "#0053d6",
+    black: "#F0F5F5",
+  }
+
+  export const textColor = {
+    caption: "#0053d6",
+    basetext: "#1236ab",
   }

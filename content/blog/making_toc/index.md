@@ -1,5 +1,5 @@
 ---
-title: gatsby製のblogにちゃんとしたtable of content（目次）を付ける
+title: gatsby-blogにtable of contentを付ける
 date: "2020-11-19T22:12:03.284Z"
 description: ""
 ---
@@ -8,7 +8,7 @@ description: ""
 gatsbyで作られたブログに
 * リンクが機能していて
 * スクロールに追従する  
-目次(table of contents、右にあるやつ)をつける方法についてまとめました。
+目次をつける方法について
 
 MDX pluginは使わずに`gatsby-transformer-remark`の元で実現しています。
 

@@ -72,11 +72,15 @@ const BioInner = ({ className }) => {
 const Bio = styled(BioInner)`
 display: flex;
 align-items: center;
-padding: ${rhythm(0.5)} ${rhythm(0.25)};
+padding: ${rhythm(1)} ${rhythm(0.25)};
+margin-top: ${rhythm(0.5)};
+margin-left: ${rhythm(0.20)};
+margin-right: ${rhythm(0.20)};
 font-style: italic;
-color: var(--fg-demisub-color);
+color: var(--fg-color);
+background-color: var(--fg-article-color);
 border-radius: ${rhythm(0.5)};
-${scale(-3 / 8)};
+${scale(0)};
 box-shadow:
   0 1.9px 2.5px rgba(0, 0, 0, 0.057),
   0 5px 6.1px rgba(0, 0, 0, 0.076),

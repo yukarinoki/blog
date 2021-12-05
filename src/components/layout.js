@@ -1,7 +1,7 @@
 import React from "react"
 import { graphql, useStaticQuery } from "gatsby"
 import styled, { createGlobalStyle } from "styled-components"
-import { grayColor, mainColor, subColor } from "../utils/color"
+import { grayColor, mainColor, subColor, textColor } from "../utils/color"
 import { mainAreaWidth, sideBarWidth } from "../utils/width"
 import { Header } from "./header"
 import { rhythm, scale } from "../utils/typography"
@@ -10,15 +10,19 @@ const GlobalStyle = createGlobalStyle`
   :root {
     --bg-color: ${grayColor.black};
     --bg-light-color: ${grayColor.darkest};
-    --fg-color: hsl(0, 100%, 100%, 0.9);
+    --fg-color: ${textColor.basetext};
+    --text-color: ${textColor.basetext};
+    --header-color: ${textColor.caption};
     --fg-demisub-color: hsl(0, 100%, 100%, 0.78);
     --fg-sub-color: hsl(0, 100%, 100%, 0.65);
     --fg-link-color: ${subColor.normal};
     --fg-link-visited-color: ${subColor.light};
+    --bg-article-color: ${mainColor.dark};
+    --fg-article-color: ${mainColor.dark};
     @media (prefers-color-scheme: dark) {
       --bg-color: ${grayColor.black};
       --bg-light-color: ${grayColor.darkest};
-      --fg-color: hsl(0, 100%, 100%, 0.9);
+      --fg-color: ${textColor.basetext};
       --fg-demisub-color: hsl(0, 100%, 100%, 0.78);
       --fg-sub-color: hsl(0, 100%, 100%, 0.65);
       --fg-link-color: ${subColor.normal};
@@ -28,7 +32,16 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: var(--bg-light-color);
   }
-  h1, h2, h3, h4, h5, h6 {
+  article{
+    background-color: var(--bg-article-color);
+  }
+  h1{
+    color: ${textColor.caption};
+    @media (prefers-color-scheme: dark) {
+      color: ${textColor.caption};
+    }
+  }
+  h2, h3, h4, h5, h6 {
     color: ${mainColor.dark};
     @media (prefers-color-scheme: dark) {
       color: var(--fg-color);
@@ -48,7 +61,7 @@ const GlobalStyle = createGlobalStyle`
     color: var(--fg-link-color);
   }
   a:visited {
-    color: var(--fg-link-visited-color);
+    color: var(--fg-link-color);
   }
   /* prismjs */
   .gatsby-highlight {
@@ -101,10 +114,10 @@ const GlobalStyle = createGlobalStyle`
 const LayoutStyle = styled.div`
   display: grid;
   grid-template-areas:
-    "left header ."
+    "left header header"
     "left main   right"
     "left footer right";
-  grid-template-rows: max-content max-content auto;
+  grid-template-rows: ${rhythm(5)} max-content auto;
   grid-template-columns: 0 100% 0;
   max-width: ${rhythm(mainAreaWidth)};
   @media (min-width: ${rhythm(mainAreaWidth + sideBarWidth)}) {
@@ -126,6 +139,7 @@ const LayoutStyle = styled.div`
   }
   & > main {
     grid-area: main;
+    border-radius: ${rhythm(0.5)};
     max-width: ${rhythm(mainAreaWidth)};
     padding: ${rhythm(1)};
     background-color: var(--bg-color);
@@ -140,6 +154,7 @@ const LayoutStyle = styled.div`
   }
   & > div:nth-of-type(2) {
     grid-area: right;
+    background-color: ${mainColor.normal};
     @media (max-width: ${rhythm(mainAreaWidth + sideBarWidth)}) {
       display: none;
     }
@@ -147,7 +162,7 @@ const LayoutStyle = styled.div`
   & > footer {
     grid-area: footer;
     padding: ${rhythm(1)} ${rhythm(1)} ${rhythm(1)};
-    background-color: var(--bg-color);
+    background-color: ${mainColor.normal};
     color: var(--fg-demisub-color);
   }
   & > footer p {
@@ -195,7 +210,6 @@ const Layout = ({ location, title, children , rightSide}) => {
           <footer>
             © {new Date().getFullYear()}, Built with
             {` `}
-            <a href="https://www.gatsbyjs.org">Gatsby</a>
           </footer>
     </LayoutStyle>
   )

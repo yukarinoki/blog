@@ -30,8 +30,8 @@ export const Article = styled(ArticleInner)`
   & > header > p {
     display: block;
     margin-bottom: 0;
-    ${scale(-0.25)};
-    color: var(--fg-demisub-color);
+    ${scale(0)};
+    color: var(--header-color);
   }
   & > header > div {
     margin: ${rhythm(0.25)} 0;

@@ -19,6 +19,7 @@ export const Header = styled(HeaderInner)`
   flex-flow: wrap row;
   justify-content: flex-end;
   align-items: flex-end;
+  height: 100%;
   background-color: ${mainColor.normal};
   padding: ${rhythm(0.5)} ${rhythm(3 / 4)};
   & > h1 {
@@ -28,7 +29,7 @@ export const Header = styled(HeaderInner)`
   & > h1 > a {
     font-family: "Source Code Pro";
     color: white;
-    ${scale(1)}
+    ${scale(2.4)}
   }
   & > nav {
     flex: auto 0 0;

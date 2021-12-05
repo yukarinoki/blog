@@ -16,10 +16,10 @@ margin-top: ${rhythm(0.5)};
 margin-left: ${rhythm(0.20)};
 margin-right: ${rhythm(0.20)};
 position: sticky;
-background-color: #202329;
+background-color: var(--bg-article-color);
 border-radius: ${rhythm(0.5)};
-color: var(--fg-demisub-color);
-${scale(-3 / 8)};
+color: var(--text-color);
+${scale(0)};
 align-self: baseline;
 box-shadow:
   0 1.9px 2.5px rgba(0, 0, 0, 0.057),

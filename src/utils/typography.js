@@ -4,8 +4,24 @@ const theme = {
   baseFontSize: "16px",
   baseLineHeight: 1.75,
   scaleRatio: 2,
-  headerFontFamily: ["sans-serif"],
-  bodyFontFamily: ["sans-serif"],
+  googleFonts: [
+    {
+      name: 'M+PLUS+Rounded+1c',
+      styles: ['400'],
+    },
+    {
+      name: 'Noto+Sans+JP',
+      styles: ['400'],
+    },
+  ],
+  headerFontFamily: [
+    "M PLUS Rounded 1c",
+    "sans-serif",
+  ],
+  bodyFontFamily: [
+    "Noto Sans JP",
+    "sans-serif",
+  ],
   bodyColor: "hsl(0,0%,0%,0.8)",
 }
 
