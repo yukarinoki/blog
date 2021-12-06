@@ -1,7 +1,8 @@
 ---
 title: per_cpu_variableとRELOC_HIDE()
 date: "2020-11-06T05:12:03.284Z"
-description: "per_cpu_variableとRELOC_HIDE()の解説です"
+description: "per_cpu_variableとRELOC_HIDE()の解説"
+category: "tech"
 ---
 # Per cpu variable
 linux kernelには、per cpu variableという機構があります。(Per-CPU Variablesとも書かれる。)  

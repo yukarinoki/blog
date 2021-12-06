@@ -2,6 +2,7 @@
 title: Dec 2020 読んだもの、やったこと
 date: "2020-12-02T22:12:03.284Z"
 description: ""
+category: "diary"
 ---
 
 # やったこと

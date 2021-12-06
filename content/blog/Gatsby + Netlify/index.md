@@ -2,9 +2,10 @@
 title: Gastby + Netlifyで高速なblog
 date: "2020-06-03T22:12:03.284Z"
 description: "ほんとにはやい"
+category: "tech"
 ---
  
-Gatsby + Netlifyが早くて便利らしいと聞いたので、やってみました。
-本当に速くてすごい。
+Gatsby + Netlifyが早いらしいと聞いたので作ってみた
+本当に速いのですごいぞ。
 
 ![lighthouse](./lighthouse.png)

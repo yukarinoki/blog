@@ -141,7 +141,8 @@ const LayoutStyle = styled.div`
     grid-area: main;
     border-radius: ${rhythm(0.5)};
     max-width: ${rhythm(mainAreaWidth)};
-    padding: ${rhythm(1)};
+    padding: ${rhythm(0.5)};
+    margin-left: ${rhythm(0.3)};
     background-color: var(--bg-color);
     color: var(--fg-color);
     box-shadow:

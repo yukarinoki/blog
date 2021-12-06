@@ -7,6 +7,7 @@ module.exports = {
     },
     description: `none`,
     siteUrl: `https://epic-golick-eb81d7.netlify.app/`,
+    pathPrefix: `/article_headers`,
     social: {
       twitter: `bkaclub`
     }
@@ -74,7 +75,7 @@ module.exports = {
         background_color: `#ffffff`,
         theme_color: `#2c91ec`,
         display: `minimal-ui`,
-        icon: `content/assets/gatsby-icon.png`
+        icon: `content/assets/profile-pic.jpg`
       }
     },
     `gatsby-plugin-react-helmet`,

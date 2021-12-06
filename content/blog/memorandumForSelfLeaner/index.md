@@ -1,7 +1,8 @@
 ---
 title: 自分用備忘録 CS自学者のために(Teach Your Self Computer Science)
 date: "2020-06-22T22:12:03.284Z"
-description: ""
+description: "Teach Your Self Computer Science : のうちの自分が興味のある部分を自分用備忘録としてまとめておく。 "
+category: "etc"
 ---
 
 # 概要

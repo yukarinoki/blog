@@ -1,7 +1,6 @@
 // Gatsby supports TypeScript natively!
 import React from "react"
-import { PageProps, Link, graphql } from "gatsby"
-
+import { PageProps, useStaticQuery, Link, graphql, withPrefix } from "gatsby"
 import Bio from "../components/bio"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
@@ -40,21 +39,25 @@ const BlogIndex = ({ data, location }) => {
       <div style={{display: `flex`, flexWrap: `wrap`, flexDirection: `row`}}>
       {posts.map(({ node }) => {
         const title = node.frontmatter.title || node.fields.slug
+        const category = node.frontmatter.category || node.fields.slug
+        const img_withext = category + ".jpg"  
         return (
-          <article key={node.fields.slug} style={{position:`relative`, margin: `20px auto auto auto`, paddingTop: rhythm(0.5), paddingLeft: rhythm(0.5), paddingRight: rhythm(0.5), width: `45%`, height: rhythm(12)}}>
+          <article key={node.fields.slug} style={{position:`relative`, margin: `20px auto auto auto`, width: `45%`, height: rhythm(12)}}>
             <header>
-              <h2
-                style={{
-                  marginBottom: rhythm(1 / 4),
-                }}
-              >
+              <div style={{position: `relative`}}>
+                <div style={{width: `100%`, height: rhythm(5), overflow: `hidden`}}>
+                  <img src={withPrefix('/article_headers/' + img_withext)} alt="sambnail" />
+                </div>
+                <p style={{position: `absolute`, top: `0`, left: rhythm(1 / 4)}}> {category} </p>
+              </div>
+              <h2 style={{ marginLeft: rhythm(1 / 4)}}>
                 <Link style={{ boxShadow: `none` }} to={node.fields.slug}>
                   {title}
                 </Link>
               </h2>
             
             </header>
-            <section style={{ margin: rhythm(0.5)}}>
+            <section style={{ marginLeft: rhythm(0.4), marginRight: rhythm(0.4)}}>
               <p
                 dangerouslySetInnerHTML={{
                   __html: node.frontmatter.description || node.excerpt,
@@ -99,6 +102,7 @@ export const pageQuery = graphql`
             date(formatString: "MMMM DD, YYYY")
             title
             description
+            category
           }
         }
       }

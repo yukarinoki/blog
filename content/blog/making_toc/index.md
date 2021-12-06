@@ -1,7 +1,8 @@
 ---
 title: gatsby-blogにtable of contentを付ける
 date: "2020-11-19T22:12:03.284Z"
-description: ""
+description: "gatsbyで作られたブログに、リンクが機能していてスクロールに追従する目次をつける方法について"
+category: "tech"
 ---
 
 # 概要
