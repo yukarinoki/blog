@@ -58,6 +58,7 @@ https://github.com/MerlinVR/UdonSharp/releases
 
 ## C#でコーディングするモード
 スイッチのオブジェクトにUdon Behaviourを追加してください。New Programの下のドロップダウンから`Udon C# Programing Asset`を選択し、New Programをクリック、続けてCreate Scriptもクリックしてください。すると、ファイルを保存するディレクトリを聞かれるので、どこでもいいので保存してください（僕は`プロジェクト直下/Assets/yukarinoki/interactive_mirror`というディレクトリに設定しました）。保存すると、おそらくVisual Studioが開くと思います。開いたら右側のソリューションエクスプローラーの一番上から、Assembly-Csharpを開いて自分が先ほど保存したファイル開いてください。（僕の環境では以下の場所にあります。）
+
 ![direc](direc.png)
 
 すると左側に以下のコードが現れると思います。
@@ -235,7 +236,7 @@ public override void OnPlayerJoined(VRCPlayerApi player)
 #　あとがき
 まず、パッと見ただけでも、C#のほうがUdon Graphより簡単だということがわかってもらえると思います。この複雑度でこの差ですから、もう少し複雑になるとUdonSharpの効用は計り知れないと思います。  C#実装をみて、「Udon Graphは意外と簡単にC#に変換できるんだな」ということだけでもわかってもらえると嬉しいです。
 
-本稿の内容だけで概念としては、Udon Sharpの実装のほぼすべてみたいな感じになると思いますが、実際にはいろいろ複雑な部分もあります。  
-もし、もう少し勉強したい方はaki_lua87氏が実装されたoxゲーム、リバーシのコードを確認してみると良いと思います。
-https://aki-lua87.booth.pm/
+本稿の内容だけで概念としては、Udon Sharpの実装のほぼすべてみたいな感じになると思いますが、実際にはいろいろ複雑な部分もあります。    
+もう少し勉強したい方はaki_lua87氏が実装されたoxゲーム、リバーシのコードを確認してみると良いと思います。  
+https://aki-lua87.booth.pm/  
 
