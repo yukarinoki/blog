@@ -12,7 +12,7 @@ https://antelang.org/
 
 C++のような手続き型言語とRush, Haskelのような関数型言語の中間を目指しているらしい。Rustほど真面目にメモリ安全を目指さない分、自由度が高く書きやすい言語を目指しているようだ。特徴的なのは、Algebraic Effectかな、プロダクションレベルでこの仕様を使える最初の言語になりそう。（LISP・・・？なんですかそれ）
 
-使うのは自分でAnteのコンパイラ（Rust製）をコンパイルする必要があるようだ。コンパイラのリポジトリは以下である。
+使うには自分でAnteのコンパイラ（Rust製）をコンパイルする必要があるようだ。コンパイラのリポジトリは以下である。
 
 jfecher/ante  
 https://github.com/jfecher/ante  
@@ -69,7 +69,7 @@ fatal error: mach-o/compact_unwind_encoding.h: No such file or directory
 ここに記述がある。  
 https://github.com/llvmenv/llvmenv/issues/115#issuecomment-1072951262  
 super hackyだがこれしかないようだった。
-つまり、mach-oディレクトリを作成し、そこにネットからググって取ってきたcompact_unwind_encoding.hを作るという方法だ。環境にもよるかもしれないが、以下の位置にファイルを配置すれば良い。
+つまり、mach-oディレクトリを作成し、そこにネットからググって取ってきたcompact_unwind_encoding.hを作るという方法だ。環境にもよるかもしれないが、以下の位置にファイルを配置すれば良い。  
 `/home/{ユーザー名}/.cache/llvmenv/13.0.0/tools/lld/MachO/mach-o/compact_unwind_encoding.h`
 
 ## ポイント3 sys/cdefs.hがない
