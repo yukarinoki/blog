@@ -19,8 +19,9 @@ https://github.com/jfecher/ante
 
 本記事はこのコンパイラをコンパイルするうえでつまづいたポイントを後世のために残しておくためのものである。
 
-## 環境 &　ビルド法
-環境はWSL: Ubuntu20.04
+## 環境 & ビルド法
+環境は`WSL: Ubuntu20.04`  
+`build-essential`とかはすでに入れている。
 
 ビルドは以下のコマンドを用いて行った。
 ```
@@ -69,8 +70,12 @@ fatal error: mach-o/compact_unwind_encoding.h: No such file or directory
 ここに記述がある。  
 https://github.com/llvmenv/llvmenv/issues/115#issuecomment-1072951262  
 super hackyだがこれしかないようだった。
-つまり、mach-oディレクトリを作成し、そこにネットからググって取ってきたcompact\_unwind\_encoding.hを作るという方法だ。環境にもよるかもしれないが、以下の位置にファイルを配置すれば良い。  
+つまり、mach-oディレクトリを作成し、そこにネットからググって取ってきたcompact\_unwind\_encoding.hを配置するという方法だ。環境にもよるかもしれないが、以下の位置にファイルを配置すれば良い。  
 `/home/{ユーザー名}/.cache/llvmenv/13.0.0/tools/lld/MachO/mach-o/compact_unwind_encoding.h`
+
+私がネットから取ってきたcompact\_unwind\_encoding.hはこれ  
+https://github.com/JuliaLang/libosxunwind/blob/master/include/mach-o/compact_unwind_encoding.h  
+う～ん、super hacky!
 
 ## ポイント3 sys/cdefs.hがない
 ### 問題
