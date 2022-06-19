@@ -1,5 +1,5 @@
 ---
-title: anteをコンパイルするときの謎つまづきポイント
+title: Anteをコンパイルするときの謎つまづきポイント
 date: "2022-06-18T22:12:03.284Z"
 description: "プログラミング言語Anteのコンパイラをコンパイルするときに、つまづいたポイントをTips的に残す"
 category: "tech"
@@ -23,7 +23,7 @@ https://github.com/jfecher/ante
 環境は`WSL: Ubuntu20.04`  
 `build-essential`とかはすでに入れている。
 
-ビルドは以下のコマンドを用いて行った。
+ビルドは以下のコマンドを用いて行った。AnteのgithubのREADME.mdに書いてある方法だ。
 ```
 $ cargo install llvmenv
 $ llvmenv init
@@ -32,7 +32,7 @@ $ llvmenv global 13.0.0
 $ LLVM_SYS_130_PREFIX=$(llvmenv prefix)
 $ cargo build
 ```
-llvm 13.0.0も自前でビルドする方式である。
+llvm 13.0.0 も自前でビルドする方式である。
 
 ## ポイント1  error: a destructor cannot be ‘constexpr‘
 
@@ -47,11 +47,11 @@ error: a destructor cannot be ‘constexpr‘
 というエラーが出る。
 
 ### 対処法
-gcc, g++のバージョンが古いことが原因。現在のllvmはgcc-9ではコンパイルできない。aptからgcc-10, g++-10を入れて、update-altanativeでデフォルト化する。
+gcc, g++のバージョンが古いことが原因。現在のllvmはgcc-9ではコンパイルできない。aptからgcc-10, g++-10を入れて、`update-altanative`でデフォルト化する。
 ```
 sudo apt install gcc-10 g++-10
 ```
-update-altanativeについては、ここを参照  
+`update-altanative`については、ここを参照  
 https://students-tech.blog/post/change-gcc.html
 
 ## ポイント2  mach-o/compact\_unwind\_encoding.h が無い
@@ -77,7 +77,7 @@ super hackyだがこれしかないようだった。
 https://github.com/JuliaLang/libosxunwind/blob/master/include/mach-o/compact_unwind_encoding.h  
 う～ん、super hacky!
 
-## ポイント3 sys/cdefs.hがない
+## ポイント3 sys/cdefs.h がない
 ### 問題
 ```
 $ llvmenv build-entry -G Makefile -j7 13.0.0
@@ -102,19 +102,19 @@ sudo apt install libc6-dev-i386
 ```
 $ cargo build
 ```
-の部分でllvm-sysのコンパイル中に対応するllvmのバージョンがないといわれる
+の部分で`llvm-sys`のコンパイル中に対応するllvmのバージョンがないといわれる
 
 ### 対処法
-使っていたshellがzshだったので、llvmenvのgitに書いてある、zsh integrationを行った。  
-https://github.com/llvmenv/llvmenv#zsh-integration  
+使っていたshellがzshだったので、llvmenv のgitに書いてある、`zsh integration`を行った。  
+zsh integration: https://github.com/llvmenv/llvmenv#zsh-integration  
 
 ```
 source <(llvmenv zsh)
 ```
 を`.zshrc`に書き込み。
 
-これでできるようになったが、単にshellに入りなおすだけでも良かったのかも。（llvmenv関連の環境変数の読み込み？）
+これでできるようになったが、単にshellに入りなおすだけでも良かったのかも。（llvmenv 関連の環境変数の読み込み？）
 
 
 ## 終わりに
-コンパイル時間がかかった。コントリビュートできたらしたい、rustかけないけど逆説的に勉強モチベがわきました。
+コンパイル時間がかかった。コントリビュートできたらしたい、Rustかけないけど逆説的に勉強モチベがわきました。
