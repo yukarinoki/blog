@@ -1,7 +1,7 @@
 ---
 title: anteをコンパイルするときの謎つまづきポイント
 date: "2022-06-18T22:12:03.284Z"
-description: ""
+description: "プログラミング言語Anteのコンパイラをコンパイルするときに、つまづいたポイントをTips的に残す"
 category: "tech"
 ---
  
@@ -53,7 +53,7 @@ sudo apt install gcc-10 g++-10
 update-altanativeについては、ここを参照  
 https://students-tech.blog/post/change-gcc.html
 
-## ポイント2  mach-o/compact_unwind_encoding.h が無い
+## ポイント2  mach-o/compact\_unwind\_encoding.h が無い
 
 ### 問題
 ```
@@ -69,7 +69,7 @@ fatal error: mach-o/compact_unwind_encoding.h: No such file or directory
 ここに記述がある。  
 https://github.com/llvmenv/llvmenv/issues/115#issuecomment-1072951262  
 super hackyだがこれしかないようだった。
-つまり、mach-oディレクトリを作成し、そこにネットからググって取ってきたcompact_unwind_encoding.hを作るという方法だ。環境にもよるかもしれないが、以下の位置にファイルを配置すれば良い。  
+つまり、mach-oディレクトリを作成し、そこにネットからググって取ってきたcompact\_unwind\_encoding.hを作るという方法だ。環境にもよるかもしれないが、以下の位置にファイルを配置すれば良い。  
 `/home/{ユーザー名}/.cache/llvmenv/13.0.0/tools/lld/MachO/mach-o/compact_unwind_encoding.h`
 
 ## ポイント3 sys/cdefs.hがない
