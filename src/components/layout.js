@@ -1,75 +1,125 @@
 import React from "react"
 import { graphql, useStaticQuery } from "gatsby"
 import styled, { createGlobalStyle } from "styled-components"
-import { grayColor, mainColor, subColor, textColor } from "../utils/color"
+import { grayColor, mainColor, accentColor, textColor } from "../utils/color"
 import { mainAreaWidth, sideBarWidth } from "../utils/width"
 import { Header } from "./header"
 import { rhythm, scale } from "../utils/typography"
 
 const GlobalStyle = createGlobalStyle`
   :root {
-    --bg-color: ${grayColor.black};
-    --bg-light-color: ${grayColor.darkest};
-    --fg-color: ${textColor.basetext};
-    --text-color: ${textColor.basetext};
-    --header-color: ${textColor.caption};
-    --fg-demisub-color: hsl(0, 100%, 100%, 0.78);
-    --fg-sub-color: hsl(0, 100%, 100%, 0.65);
-    --fg-link-color: ${subColor.normal};
-    --fg-link-visited-color: ${subColor.light};
+    --bg-color: ${mainColor.dark};
+    --bg-light-color: ${mainColor.darkest};
+    --bg-surface: ${mainColor.normal};
+    --fg-color: ${textColor.primary};
+    --text-color: ${textColor.primary};
+    --text-secondary: ${textColor.secondary};
+    --header-color: ${accentColor.primary};
+    --fg-demisub-color: ${textColor.secondary};
+    --fg-sub-color: ${textColor.dim};
+    --fg-link-color: ${accentColor.primary};
+    --fg-link-visited-color: ${accentColor.tertiary};
     --bg-article-color: ${mainColor.dark};
     --fg-article-color: ${mainColor.dark};
-    @media (prefers-color-scheme: dark) {
-      --bg-color: ${grayColor.black};
-      --bg-light-color: ${grayColor.darkest};
-      --fg-color: ${textColor.basetext};
-      --fg-demisub-color: hsl(0, 100%, 100%, 0.78);
-      --fg-sub-color: hsl(0, 100%, 100%, 0.65);
-      --fg-link-color: ${subColor.normal};
-      --fg-link-visited-color: ${subColor.light};
-    }
+    --border-color: ${grayColor.border};
   }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: ${grayColor.border} ${mainColor.darkest};
+  }
+  *::-webkit-scrollbar {
+    width: 8px;
+  }
+  *::-webkit-scrollbar-track {
+    background: ${mainColor.darkest};
+  }
+  *::-webkit-scrollbar-thumb {
+    background: ${grayColor.border};
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: ${grayColor.selection};
+    color: ${accentColor.primary};
+  }
+
   body {
-    background-color: var(--bg-light-color);
+    background-color: ${mainColor.darkest};
   }
-  article{
-    background-color: var(--bg-article-color);
+
+  article {
+    background-color: ${mainColor.dark};
   }
-  h1{
-    color: ${textColor.caption};
-    @media (prefers-color-scheme: dark) {
-      color: ${textColor.caption};
-    }
+
+  h1 {
+    color: ${accentColor.primary};
+    text-shadow: 0 0 20px rgba(0, 255, 242, 0.15);
   }
+
   h2, h3, h4, h5, h6 {
-    color: ${mainColor.dark};
-    @media (prefers-color-scheme: dark) {
-      color: var(--fg-color);
-    }
+    color: ${textColor.primary};
+    font-family: "JetBrains Mono", "Noto Sans JP", monospace;
   }
+
+  /* Markdown-style prefix for article headings */
+  article > main h2::before {
+    content: "## ";
+    color: ${accentColor.primary};
+    opacity: 0.5;
+  }
+  article > main h3::before {
+    content: "### ";
+    color: ${accentColor.primary};
+    opacity: 0.4;
+  }
+
   blockquote {
     margin-left: 0;
     padding-left: ${rhythm(1)};
-    border-left: ${rhythm(1 / 8)} solid ${grayColor.light};
-    color: var(--fg-demisub-color);
+    border-left: 3px solid ${accentColor.primary};
+    color: ${textColor.secondary};
+    font-style: italic;
   }
+
   table {
     display: block;
     overflow: auto;
   }
+
   a {
-    color: var(--fg-link-color);
+    color: ${accentColor.primary};
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease, text-shadow 0.2s ease;
+  }
+  a:hover {
+    border-bottom-color: ${accentColor.primary};
+    text-shadow: 0 0 8px rgba(0, 255, 242, 0.4);
   }
   a:visited {
-    color: var(--fg-link-color);
+    color: ${accentColor.tertiary};
   }
-  /* prismjs */
+
+  /* prismjs code blocks */
   .gatsby-highlight {
-    background-color: #2f2f2f;
-    border-radius: 0.3em;
+    background-color: ${mainColor.dark};
+    border: 1px solid ${grayColor.border};
+    border-radius: 2px;
     margin: ${rhythm(1)} 0;
     padding-left: 0.5em;
     overflow: auto;
+    position: relative;
+  }
+  .gatsby-highlight::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, ${accentColor.primary}, ${accentColor.tertiary});
+    opacity: 0.6;
   }
   @media (max-width: 640px) {
     .gatsby-highlight {
@@ -83,10 +133,11 @@ const GlobalStyle = createGlobalStyle`
   }
   .gatsby-code-title {
     display: block;
-    background: #2f2f2f;
+    background: ${mainColor.normal};
+    border: 1px solid ${grayColor.border};
+    border-bottom: none;
     width: 100%;
-    border-top-left-radius: 0.3em;
-    border-top-right-radius: 0.3em;
+    border-radius: 2px 2px 0 0;
     overflow: hidden;
     margin-top: ${rhythm(1)};
   }
@@ -94,12 +145,13 @@ const GlobalStyle = createGlobalStyle`
     display: inline-block;
     height: calc(${rhythm(1)} - 3px);
     position: relative;
-    color: ${grayColor.lightest};
-    background: ${grayColor.darker};
-    border-top-left-radius: 0.3em;
-    border-bottom-right-radius: 0.3em;
-    padding: 0 4px 4px 4px;
+    color: ${accentColor.primary};
+    background: ${mainColor.light};
+    border-bottom-right-radius: 2px;
+    padding: 0 8px 4px 8px;
     top: -3px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8em;
   }
   .gatsby-code-title + .gatsby-highlight {
     border-top-left-radius: 0;
@@ -110,7 +162,26 @@ const GlobalStyle = createGlobalStyle`
   .footnotes {
     ${scale(-1 / 8)}
   }
+
+  /* Inline code */
+  :not(pre) > code {
+    background: ${mainColor.normal};
+    border: 1px solid ${grayColor.border};
+    border-radius: 3px;
+    padding: 0.15em 0.4em;
+    color: ${accentColor.primary};
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.85em;
+  }
+
+  /* HR styling */
+  hr {
+    background: linear-gradient(90deg, ${accentColor.primary}, ${accentColor.tertiary});
+    height: 1px;
+    border: none;
+  }
 `
+
 const LayoutStyle = styled.div`
   display: grid;
   grid-template-areas:
@@ -139,23 +210,19 @@ const LayoutStyle = styled.div`
   }
   & > main {
     grid-area: main;
-    border-radius: ${rhythm(0.5)};
+    border-radius: 2px;
     max-width: ${rhythm(mainAreaWidth)};
     padding: ${rhythm(0.5)};
     margin-left: ${rhythm(0.3)};
-    background-color: var(--bg-color);
-    color: var(--fg-color);
-    box-shadow:
-      0 1.9px 2.5px rgba(0, 0, 0, 0.057),
-      0 5px 6.1px rgba(0, 0, 0, 0.076),
-      0 10.1px 11.4px rgba(0, 0, 0, 0.086),
-      0 19.2px 19.8px rgba(0, 0, 0, 0.092),
-      0 38.4px 34.8px rgba(0, 0, 0, 0.1),
-      0 101px 74px rgba(0, 0, 0, 0.13);
+    background-color: ${mainColor.dark};
+    color: ${textColor.primary};
+    border: 1px solid ${grayColor.border};
+    border-top: 2px solid ${accentColor.primary};
+    box-shadow: 0 0 20px rgba(0, 255, 242, 0.05);
   }
   & > div:nth-of-type(2) {
     grid-area: right;
-    background-color: ${mainColor.normal};
+    background-color: ${mainColor.darkest};
     @media (max-width: ${rhythm(mainAreaWidth + sideBarWidth)}) {
       display: none;
     }
@@ -164,7 +231,9 @@ const LayoutStyle = styled.div`
     grid-area: footer;
     padding: ${rhythm(1)} ${rhythm(1)} ${rhythm(1)};
     background-color: ${mainColor.normal};
-    color: var(--fg-demisub-color);
+    color: ${textColor.secondary};
+    border-top: 1px solid ${grayColor.border};
+    font-family: "JetBrains Mono", monospace;
   }
   & > footer p {
     margin-bottom: ${rhythm(0.25)};
@@ -184,9 +253,7 @@ const LayoutStyle = styled.div`
   }
 `
 
-
-
-const Layout = ({ location, title, children , rightSide}) => {
+const Layout = ({ location, title, children, rightSide }) => {
   const rootPath = `${__PATH_PREFIX__}/`
   const { site } = useStaticQuery(
     graphql`
@@ -203,15 +270,14 @@ const Layout = ({ location, title, children , rightSide}) => {
   return (
     <LayoutStyle>
       <GlobalStyle />
-          <div>
-            <Header title={site.siteMetadata.title} />
-          </div>
-          <main>{children}</main>
-          <div>{rightSide}</div>
-          <footer>
-            © {new Date().getFullYear()}, Built with
-            {` `}
-          </footer>
+      <div>
+        <Header title={site.siteMetadata.title} />
+      </div>
+      <main>{children}</main>
+      <div>{rightSide}</div>
+      <footer>
+        <span style={{ opacity: 0.5 }}>&gt;</span> {new Date().getFullYear()}, Built with Gatsby
+      </footer>
     </LayoutStyle>
   )
 }

@@ -1,36 +1,39 @@
 /**
- * Main color
+ * Background colors - deep dark palette
  */
-export const subColor = {
-    light: "#EDF2BD",
-    normal: "#0053d6",
-    dark: "#743f1e",
-  }
-  
-  /**
-   * sub color
-   */
-  export const mainColor = {
-    light: "#95d8c7",
-    normal: "#14234b",
-    dark: "#FFE6F0",
-  }
-  
-  /**
-   * Gray color
-   */
-  export const grayColor = {
-    lightest: "#f3f0f3",
-    lighter: "#e8e2e8",
-    light: "#d2c5d1",
-    normal: "#c7b7c5",
-    dark: "#b19aae",
-    darker: "#90708c",
-    darkest: "#0053d6",
-    black: "#F0F5F5",
-  }
+export const mainColor = {
+  darkest: "#0a0e17",
+  dark: "#0d1117",
+  normal: "#161b22",
+  light: "#1c2333",
+}
 
-  export const textColor = {
-    caption: "#0053d6",
-    basetext: "#1236ab",
-  }
+/**
+ * Neon accent colors
+ */
+export const accentColor = {
+  primary: "#00fff2",    // cyan
+  secondary: "#39ff14",  // neon green
+  tertiary: "#bd93f9",   // purple
+  warm: "#ff6e40",       // orange
+}
+
+/**
+ * Text colors
+ */
+export const textColor = {
+  primary: "#e6edf3",
+  secondary: "#8b949e",
+  dim: "#484f58",
+  caption: "#00fff2",
+  basetext: "#e6edf3",
+}
+
+/**
+ * Utility colors
+ */
+export const grayColor = {
+  border: "#30363d",
+  selection: "#1a3a5c",
+  surface: "#21262d",
+}

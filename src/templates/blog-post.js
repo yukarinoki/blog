@@ -1,12 +1,42 @@
 import React from "react"
 import { Link, graphql } from "gatsby"
+import styled from "styled-components"
 
 import Bio from "../components/bio"
 import TOC from "../components/toc"
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { rhythm, scale } from "../utils/typography"
+import { accentColor, textColor, grayColor } from "../utils/color"
 import { Article } from "./Article"
+
+const PostNav = styled.nav`
+  margin-top: ${rhythm(1)};
+  & > ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  & li {
+    margin-bottom: ${rhythm(0.5)};
+  }
+  & a {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.85em;
+    color: ${textColor.secondary};
+    border-bottom: none;
+    transition: color 0.2s ease;
+    &:hover {
+      color: ${accentColor.primary};
+    }
+    &:visited {
+      color: ${textColor.secondary};
+    }
+  }
+`
 
 const BlogPostTemplate = ({ data, pageContext, location }) => {
   const post = data.markdownRemark
@@ -21,24 +51,24 @@ const BlogPostTemplate = ({ data, pageContext, location }) => {
       />
       <Article post={post} />
 
-      <nav>
+      <PostNav>
         <ul>
           <li>
             {previous && (
               <Link to={previous.fields.slug} rel="prev">
-                ← {previous.frontmatter.title}
+                &lt;-- {previous.frontmatter.title}
               </Link>
             )}
           </li>
           <li>
             {next && (
               <Link to={next.fields.slug} rel="next">
-                {next.frontmatter.title} →
+                {next.frontmatter.title} --&gt;
               </Link>
             )}
           </li>
         </ul>
-      </nav>
+      </PostNav>
     </Layout>
   )
 }

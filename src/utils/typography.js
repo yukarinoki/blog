@@ -6,25 +6,25 @@ const theme = {
   scaleRatio: 2,
   googleFonts: [
     {
-      name: 'M+PLUS+Rounded+1c',
-      styles: ['400'],
+      name: 'JetBrains+Mono',
+      styles: ['400', '700'],
     },
     {
       name: 'Noto+Sans+JP',
-      styles: ['400'],
+      styles: ['400', '700'],
     },
   ],
   headerFontFamily: [
-    "M PLUS Rounded 1c",
-    "sans-serif",
+    "JetBrains Mono",
+    "Noto Sans JP",
+    "monospace",
   ],
   bodyFontFamily: [
     "Noto Sans JP",
     "sans-serif",
   ],
-  bodyColor: "hsl(0,0%,0%,0.8)",
+  bodyColor: "#e6edf3",
 }
-
 
 const typography = new Typography(theme)
 

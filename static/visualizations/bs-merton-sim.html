@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monte Carlo Binary Option Simulator</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0d1117;
+  color: #e6edf3;
+  font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', 'Cascadia Code', Consolas, 'Courier New', monospace;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  width: 100%;
+}
+
+.title {
+  text-align: center;
+  font-size: 16px;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  color: #00fff2;
+  text-shadow: 0 0 10px rgba(0, 255, 242, 0.3);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.control-group label {
+  font-size: 11px;
+  color: #8b949e;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.control-group label .value {
+  color: #00fff2;
+  font-weight: bold;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: #30363d;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #00fff2;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(0, 255, 242, 0.5);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: #00fff2;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 6px rgba(0, 255, 242, 0.5);
+}
+
+.btn-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+#runBtn {
+  background: transparent;
+  color: #00fff2;
+  border: 1px solid #00fff2;
+  padding: 8px 24px;
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+#runBtn:hover {
+  background: rgba(0, 255, 242, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 242, 0.3), inset 0 0 15px rgba(0, 255, 242, 0.1);
+}
+
+#runBtn:active {
+  background: rgba(0, 255, 242, 0.2);
+}
+
+#status {
+  font-size: 12px;
+  color: #39ff14;
+}
+
+.canvas-section {
+  margin-bottom: 16px;
+}
+
+.canvas-label {
+  font-size: 11px;
+  color: #8b949e;
+  margin-bottom: 6px;
+}
+
+canvas {
+  width: 100%;
+  height: 200px;
+  border: 1px solid #30363d;
+  display: block;
+  background: #0d1117;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Monte Carlo Binary Option Simulator</div>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>S&#x2080; (initial price) <span class="value" id="val_S0">70000</span></label>
+      <input type="range" id="S0" min="68000" max="72000" step="100" value="70000">
+    </div>
+    <div class="control-group">
+      <label>K (strike) <span class="value" id="val_K">70200</span></label>
+      <input type="range" id="K" min="68000" max="72000" step="100" value="70200">
+    </div>
+    <div class="control-group">
+      <label>&sigma; (volatility) <span class="value" id="val_sigma">0.0030</span></label>
+      <input type="range" id="sigma" min="0.001" max="0.01" step="0.0005" value="0.003">
+    </div>
+    <div class="control-group">
+      <label>T (expiry, sec) <span class="value" id="val_T">300</span></label>
+      <input type="range" id="T" min="60" max="600" step="30" value="300">
+    </div>
+    <div class="control-group">
+      <label>&lambda; (jump intensity) <span class="value" id="val_lambda">1.5</span></label>
+      <input type="range" id="lambda" min="0" max="5" step="0.1" value="1.5">
+    </div>
+    <div class="control-group">
+      <label>&sigma;<sub>J</sub> (jump vol) <span class="value" id="val_sigmaJ">0.0010</span></label>
+      <input type="range" id="sigmaJ" min="0.0001" max="0.005" step="0.0001" value="0.001">
+    </div>
+    <div class="control-group">
+      <label>N (paths) <span class="value" id="val_N">2000</span></label>
+      <input type="range" id="N" min="500" max="5000" step="500" value="2000">
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button id="runBtn">Run Simulation</button>
+    <span id="status"></span>
+  </div>
+
+  <div class="canvas-section">
+    <div class="canvas-label">Price Paths (sample: 20 paths each model)</div>
+    <canvas id="pathCanvas"></canvas>
+  </div>
+
+  <div class="canvas-section">
+    <div class="canvas-label">Binary Option Price: P(S<sub>T</sub> &gt; K) over time</div>
+    <canvas id="probCanvas"></canvas>
+  </div>
+</div>
+
+<script>
+(function() {
+  // DOM references
+  const pathCanvas = document.getElementById('pathCanvas');
+  const probCanvas = document.getElementById('probCanvas');
+  const runBtn = document.getElementById('runBtn');
+  const statusEl = document.getElementById('status');
+
+  // Slider bindings
+  const sliders = ['S0', 'K', 'sigma', 'T', 'lambda', 'sigmaJ', 'N'];
+  const formatters = {
+    S0: v => Math.round(v),
+    K: v => Math.round(v),
+    sigma: v => parseFloat(v).toFixed(4),
+    T: v => Math.round(v),
+    lambda: v => parseFloat(v).toFixed(1),
+    sigmaJ: v => parseFloat(v).toFixed(4),
+    N: v => Math.round(v)
+  };
+
+  sliders.forEach(id => {
+    const slider = document.getElementById(id);
+    const display = document.getElementById('val_' + id);
+    slider.addEventListener('input', () => {
+      display.textContent = formatters[id](slider.value);
+    });
+  });
+
+  function getParams() {
+    return {
+      S0: parseFloat(document.getElementById('S0').value),
+      K: parseFloat(document.getElementById('K').value),
+      sigma: parseFloat(document.getElementById('sigma').value),
+      T: parseFloat(document.getElementById('T').value),
+      lambda: parseFloat(document.getElementById('lambda').value),
+      sigmaJ: parseFloat(document.getElementById('sigmaJ').value),
+      N: parseInt(document.getElementById('N').value)
+    };
+  }
+
+  // Box-Muller transform
+  function randn() {
+    let u1, u2;
+    do { u1 = Math.random(); } while (u1 === 0);
+    u2 = Math.random();
+    return Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+  }
+
+  // Poisson random variable
+  function poisson(lam) {
+    if (lam === 0) return 0;
+    const L = Math.exp(-lam);
+    let k = 0;
+    let p = 1;
+    do {
+      k++;
+      p *= Math.random();
+    } while (p > L);
+    return k - 1;
+  }
+
+  function runSimulation() {
+    const params = getParams();
+    const { S0, K, sigma, T, lambda: lam, sigmaJ, N } = params;
+
+    const numSteps = 100;
+    const dt = T / numSteps;
+
+    // Storage for sample paths (20 each)
+    const sampleCount = 20;
+    const bsPaths = [];
+    const mertonPaths = [];
+
+    // Storage for probability at each step
+    const bsAboveK = new Array(numSteps + 1).fill(0);
+    const mertonAboveK = new Array(numSteps + 1).fill(0);
+
+    // Initialize counts at step 0
+    if (S0 > K) {
+      bsAboveK[0] = N;
+      mertonAboveK[0] = N;
+    }
+
+    for (let i = 0; i < N; i++) {
+      let sBS = S0;
+      let sMerton = S0;
+      const storeBs = i < sampleCount;
+      const storeMerton = i < sampleCount;
+      let bsPath, mertonPath;
+
+      if (storeBs) { bsPath = [sBS]; }
+      if (storeMerton) { mertonPath = [sMerton]; }
+
+      for (let t = 1; t <= numSteps; t++) {
+        const z1 = randn();
+        const z2 = randn();
+
+        // Black-Scholes GBM
+        sBS = sBS * (1 + sigma * Math.sqrt(dt) * z1);
+
+        // Merton Jump-Diffusion
+        const jumpCount = poisson(lam * dt);
+        let jumpEffect = 0;
+        for (let j = 0; j < jumpCount; j++) {
+          jumpEffect += sigmaJ * randn();
+        }
+        sMerton = sMerton * (1 + sigma * Math.sqrt(dt) * z2 + jumpEffect);
+
+        if (sBS > K) bsAboveK[t]++;
+        if (sMerton > K) mertonAboveK[t]++;
+
+        if (storeBs) bsPath.push(sBS);
+        if (storeMerton) mertonPath.push(sMerton);
+      }
+
+      if (storeBs) bsPaths.push(bsPath);
+      if (storeMerton) mertonPaths.push(mertonPath);
+    }
+
+    // Convert counts to probabilities
+    const bsProb = bsAboveK.map(c => c / N);
+    const mertonProb = mertonAboveK.map(c => c / N);
+
+    return { bsPaths, mertonPaths, bsProb, mertonProb, numSteps, S0, K };
+  }
+
+  function setupCanvas(canvas) {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return { ctx, w: rect.width, h: rect.height };
+  }
+
+  function drawPaths(result) {
+    const { ctx, w, h } = setupCanvas(pathCanvas);
+    const { bsPaths, mertonPaths, numSteps, S0, K } = result;
+    const pad = { top: 20, bottom: 25, left: 55, right: 15 };
+    const plotW = w - pad.left - pad.right;
+    const plotH = h - pad.top - pad.bottom;
+
+    // Find price range
+    let minP = Infinity, maxP = -Infinity;
+    const allPaths = [...bsPaths, ...mertonPaths];
+    for (const path of allPaths) {
+      for (const p of path) {
+        if (p < minP) minP = p;
+        if (p > maxP) maxP = p;
+      }
+    }
+    // Add some margin
+    const range = maxP - minP || 1;
+    minP -= range * 0.05;
+    maxP += range * 0.05;
+
+    // Background
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, w, h);
+
+    // Axes
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, pad.top + plotH);
+    ctx.lineTo(pad.left + plotW, pad.top + plotH);
+    ctx.stroke();
+
+    // Strike line
+    const kY = pad.top + plotH - ((K - minP) / (maxP - minP)) * plotH;
+    ctx.strokeStyle = '#8b949e';
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(pad.left, kY);
+    ctx.lineTo(pad.left + plotW, kY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px monospace';
+    ctx.fillText('K=' + Math.round(K), pad.left + 4, kY - 4);
+
+    // Y axis labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'right';
+    const yTicks = 5;
+    for (let i = 0; i <= yTicks; i++) {
+      const val = minP + (maxP - minP) * (i / yTicks);
+      const y = pad.top + plotH - (i / yTicks) * plotH;
+      ctx.fillText(Math.round(val).toString(), pad.left - 5, y + 3);
+    }
+    ctx.textAlign = 'left';
+
+    function mapX(step) {
+      return pad.left + (step / numSteps) * plotW;
+    }
+    function mapY(price) {
+      return pad.top + plotH - ((price - minP) / (maxP - minP)) * plotH;
+    }
+
+    // Draw BS paths (purple)
+    for (const path of bsPaths) {
+      ctx.strokeStyle = 'rgba(189, 147, 249, 0.25)';
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(mapX(0), mapY(path[0]));
+      for (let i = 1; i < path.length; i++) {
+        ctx.lineTo(mapX(i), mapY(path[i]));
+      }
+      ctx.stroke();
+    }
+
+    // Draw Merton paths (cyan)
+    for (const path of mertonPaths) {
+      ctx.strokeStyle = 'rgba(0, 255, 242, 0.25)';
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(mapX(0), mapY(path[0]));
+      for (let i = 1; i < path.length; i++) {
+        ctx.lineTo(mapX(i), mapY(path[i]));
+      }
+      ctx.stroke();
+    }
+
+    // Legend
+    ctx.font = '10px monospace';
+    ctx.fillStyle = '#bd93f9';
+    ctx.fillText('Purple: Black-Scholes', pad.left + 10, pad.top + 12);
+    ctx.fillStyle = '#00fff2';
+    ctx.fillText('Cyan: Merton Jump-Diffusion', pad.left + 10, pad.top + 24);
+  }
+
+  function drawProbCurves(result) {
+    const { ctx, w, h } = setupCanvas(probCanvas);
+    const { bsProb, mertonProb, numSteps } = result;
+    const pad = { top: 20, bottom: 25, left: 55, right: 60 };
+    const plotW = w - pad.left - pad.right;
+    const plotH = h - pad.top - pad.bottom;
+
+    // Background
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, w, h);
+
+    // Axes
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top);
+    ctx.lineTo(pad.left, pad.top + plotH);
+    ctx.lineTo(pad.left + plotW, pad.top + plotH);
+    ctx.stroke();
+
+    // Y axis (0 to 1)
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= 5; i++) {
+      const val = i / 5;
+      const y = pad.top + plotH - val * plotH;
+      ctx.fillText(val.toFixed(1), pad.left - 5, y + 3);
+      // Grid line
+      ctx.strokeStyle = '#21262d';
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(pad.left + plotW, y);
+      ctx.stroke();
+    }
+    ctx.textAlign = 'left';
+
+    function mapX(step) {
+      return pad.left + (step / numSteps) * plotW;
+    }
+    function mapY(prob) {
+      return pad.top + plotH - prob * plotH;
+    }
+
+    // BS curve (purple dashed)
+    ctx.strokeStyle = '#bd93f9';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(mapX(0), mapY(bsProb[0]));
+    for (let i = 1; i <= numSteps; i++) {
+      ctx.lineTo(mapX(i), mapY(bsProb[i]));
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Merton curve (cyan solid)
+    ctx.strokeStyle = '#00fff2';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(mapX(0), mapY(mertonProb[0]));
+    for (let i = 1; i <= numSteps; i++) {
+      ctx.lineTo(mapX(i), mapY(mertonProb[i]));
+    }
+    ctx.stroke();
+
+    // Final probability labels
+    const bsFinal = bsProb[numSteps];
+    const mertonFinal = mertonProb[numSteps];
+
+    ctx.font = '11px monospace';
+    ctx.fillStyle = '#bd93f9';
+    ctx.fillText('BS: ' + bsFinal.toFixed(3), pad.left + plotW + 5, mapY(bsFinal) + 4);
+    ctx.fillStyle = '#00fff2';
+    ctx.fillText('MJ: ' + mertonFinal.toFixed(3), pad.left + plotW + 5, mapY(mertonFinal) + 18);
+
+    // Legend
+    ctx.font = '10px monospace';
+    ctx.fillStyle = '#bd93f9';
+    ctx.fillText('-- Purple: BS P(S>K)', pad.left + 10, pad.top + 12);
+    ctx.fillStyle = '#00fff2';
+    ctx.fillText('\u2014 Cyan: Merton P(S>K)', pad.left + 10, pad.top + 24);
+  }
+
+  function run() {
+    statusEl.textContent = 'Running...';
+    statusEl.style.color = '#39ff14';
+    runBtn.disabled = true;
+
+    // Use setTimeout to allow DOM to update before blocking computation
+    setTimeout(() => {
+      const result = runSimulation();
+      drawPaths(result);
+      drawProbCurves(result);
+      statusEl.textContent = 'Done. BS final: ' + result.bsProb[result.numSteps].toFixed(4) +
+        ' | Merton final: ' + result.mertonProb[result.numSteps].toFixed(4);
+      runBtn.disabled = false;
+    }, 20);
+  }
+
+  runBtn.addEventListener('click', run);
+
+  // Handle resize
+  window.addEventListener('resize', () => {
+    // Re-run if we have results displayed
+    if (statusEl.textContent.startsWith('Done')) {
+      run();
+    }
+  });
+
+  // Initial run
+  run();
+})();
+</script>
+</body>
+</html>

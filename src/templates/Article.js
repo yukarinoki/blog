@@ -1,26 +1,22 @@
-import { graphql, useStaticQuery } from "gatsby"
 import React from "react"
 import styled from "styled-components"
-import { grayColor } from "../utils/color"
+import { accentColor, textColor, grayColor } from "../utils/color"
 import { rhythm, scale } from "../utils/typography"
 
 const ArticleInner = ({ className, post }) => {
-    return (
-        <article class={className}>
-          <header>
-            <h1>{post.frontmatter.title}</h1>
-            <p>
-                {post.frontmatter.date}
-            </p>
-          </header>
-          <main>
-            <section dangerouslySetInnerHTML={{ __html: post.html }} />
-          </main>
-          <footer>
-          </footer>
-          <hr />
-        </article>
-    )
+  return (
+    <article className={className}>
+      <header>
+        <h1>{post.frontmatter.title}</h1>
+        <p>{post.frontmatter.date}</p>
+      </header>
+      <main>
+        <section dangerouslySetInnerHTML={{ __html: post.html }} />
+      </main>
+      <footer></footer>
+      <hr />
+    </article>
+  )
 }
 
 export const Article = styled(ArticleInner)`
@@ -31,7 +27,10 @@ export const Article = styled(ArticleInner)`
     display: block;
     margin-bottom: 0;
     ${scale(0)};
-    color: var(--header-color);
+    color: ${accentColor.primary};
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.85em;
+    opacity: 0.8;
   }
   & > header > div {
     margin: ${rhythm(0.25)} 0;
@@ -48,10 +47,13 @@ export const Article = styled(ArticleInner)`
   }
   & > hr {
     margin-bottom: ${rhythm(1)};
+    background: linear-gradient(90deg, ${accentColor.primary}, ${accentColor.tertiary});
+    height: 1px;
+    border: none;
   }
   h2 {
     margin-top: ${rhythm(3)};
     padding-bottom: ${rhythm(1 / 16)};
-    border-bottom: 1px solid ${grayColor.light};
+    border-bottom: 1px solid ${grayColor.border};
   }
 `

@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    title: `Yukarinoki's Blog`,
+    title: `/dev/yukarinoki`,
     author: {
       name: `yukarinoki`,
       summary: ``
@@ -72,8 +72,8 @@ module.exports = {
         name: `Gatsby Starter Blog`,
         short_name: `GatsbyJS`,
         start_url: `/`,
-        background_color: `#ffffff`,
-        theme_color: `#2c91ec`,
+        background_color: `#0a0e17`,
+        theme_color: `#00fff2`,
         display: `minimal-ui`,
         icon: `content/assets/profile-pic.jpg`
       }

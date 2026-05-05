@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volatility Oracle - Live Feed</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  background:#0d1117;
+  color:#e6edf3;
+  font-family:"SF Mono","Fira Code","Fira Mono","Roboto Mono",Menlo,Consolas,"Liberation Mono","Courier New",monospace;
+  font-size:13px;
+  line-height:1.5;
+  overflow-x:hidden;
+}
+.root{
+  max-width:900px;
+  margin:0 auto;
+  padding:12px;
+}
+h1{
+  font-size:15px;
+  font-weight:600;
+  color:#e6edf3;
+  margin-bottom:10px;
+  letter-spacing:0.5px;
+}
+h1 span{color:#00fff2}
+.layout{
+  display:flex;
+  gap:12px;
+}
+.col-left{flex:0 0 58%;min-width:0}
+.col-right{flex:1;min-width:0}
+
+/* Canvas containers */
+.chart-box{
+  background:#161b22;
+  border:1px solid #30363d;
+  border-radius:2px;
+  margin-bottom:10px;
+  padding:8px;
+}
+.chart-box .chart-label{
+  font-size:11px;
+  color:#8b949e;
+  margin-bottom:4px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.chart-box canvas{
+  width:100%;
+  display:block;
+  border-radius:1px;
+}
+.legend{display:flex;gap:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;color:#8b949e}
+.legend-dot{width:8px;height:3px;border-radius:1px;display:inline-block}
+
+/* Oracle panel */
+.oracle-panel{
+  background:#161b22;
+  border:1px solid #30363d;
+  border-radius:2px;
+  overflow:hidden;
+  margin-bottom:10px;
+}
+.terminal-bar{
+  background:#1c2333;
+  height:24px;
+  display:flex;
+  align-items:center;
+  padding:0 10px;
+  gap:5px;
+  font-size:10px;
+  color:#8b949e;
+  border-bottom:1px solid #30363d;
+}
+.terminal-dot{
+  width:8px;height:8px;border-radius:50%;
+}
+.terminal-dot.r{background:#ff5f56}
+.terminal-dot.y{background:#ffbd2e}
+.terminal-dot.g{background:#27c93f}
+.terminal-bar .title{margin-left:8px;font-size:10px;color:#6e7681}
+.oracle-body{padding:12px}
+.oracle-header{
+  font-size:11px;
+  color:#8b949e;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:10px;
+  border-bottom:1px solid #30363d;
+  padding-bottom:6px;
+}
+.val-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:6px 0;
+  border-bottom:1px solid #21262d;
+}
+.val-row:last-of-type{border-bottom:none}
+.val-label{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:11px;
+  color:#8b949e;
+}
+.val-dot{
+  width:7px;height:7px;border-radius:50%;display:inline-block;
+}
+.val-num{
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:0.5px;
+}
+.meta-row{
+  display:flex;
+  justify-content:space-between;
+  font-size:11px;
+  color:#6e7681;
+  margin-top:10px;
+  padding-top:8px;
+  border-top:1px solid #21262d;
+}
+.staleness{font-weight:600}
+.staleness.fresh{color:#39ff14}
+.staleness.stale{color:#ff6e40;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* Controls */
+.controls-panel{
+  background:#161b22;
+  border:1px solid #30363d;
+  border-radius:2px;
+  padding:12px;
+}
+.controls-panel h3{
+  font-size:11px;
+  color:#8b949e;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  margin-bottom:10px;
+}
+.ctrl-row{
+  margin-bottom:10px;
+}
+.ctrl-row label{
+  display:flex;
+  justify-content:space-between;
+  font-size:11px;
+  color:#8b949e;
+  margin-bottom:4px;
+}
+.ctrl-row label span{color:#00fff2}
+input[type=range]{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:4px;
+  background:#30363d;
+  border-radius:2px;
+  outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:12px;height:12px;
+  border-radius:50%;
+  background:#00fff2;
+  cursor:pointer;
+}
+input[type=range]::-moz-range-thumb{
+  width:12px;height:12px;
+  border-radius:50%;
+  background:#00fff2;
+  border:none;
+  cursor:pointer;
+}
+.btn-row{display:flex;gap:8px;margin-top:12px}
+button{
+  font-family:inherit;
+  font-size:11px;
+  padding:6px 12px;
+  border-radius:2px;
+  cursor:pointer;
+  border:1px solid #30363d;
+  background:#21262d;
+  color:#e6edf3;
+  transition:all 0.15s;
+  flex:1;
+}
+button:hover{background:#30363d}
+button.active{border-color:#39ff14;color:#39ff14}
+.btn-spike{
+  border-color:#ff6e40;
+  color:#ff6e40;
+}
+.btn-spike:hover{
+  box-shadow:0 0 10px rgba(255,110,64,0.3);
+  background:#2a1a12;
+}
+.btn-spike.firing{
+  background:#2a1a12;
+  box-shadow:0 0 14px rgba(255,110,64,0.5);
+  animation:spike-glow 0.4s ease-in-out infinite alternate;
+}
+@keyframes spike-glow{0%{box-shadow:0 0 8px rgba(255,110,64,0.3)}100%{box-shadow:0 0 16px rgba(255,110,64,0.6)}}
+
+/* Price display */
+.price-display{
+  font-size:11px;
+  color:#6e7681;
+  text-align:right;
+}
+.price-display .price-val{
+  color:#00fff2;
+  font-weight:600;
+  font-size:13px;
+}
+
+/* Responsive */
+@media(max-width:640px){
+  .layout{flex-direction:column}
+  .col-left,.col-right{flex:none;width:100%}
+}
+</style>
+</head>
+<body>
+<div class="root">
+  <h1><span>&gt;</span> Volatility Oracle <span>-</span> Live Feed</h1>
+  <div class="layout">
+    <!-- LEFT COLUMN -->
+    <div class="col-left">
+      <div class="chart-box">
+        <div class="chart-label">
+          <span>Price (BTC/USD)</span>
+          <span class="price-display">$<span id="priceVal">70000.00</span></span>
+        </div>
+        <canvas id="priceCanvas" height="180"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">
+          <span>Volatility Estimators (Annualized)</span>
+          <div class="legend">
+            <span class="legend-item"><span class="legend-dot" style="background:#00fff2"></span>Realized</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#39ff14"></span>Parkinson</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#bd93f9"></span>Garman-Klass</span>
+          </div>
+        </div>
+        <canvas id="volCanvas" height="180"></canvas>
+      </div>
+    </div>
+    <!-- RIGHT COLUMN -->
+    <div class="col-right">
+      <div class="oracle-panel">
+        <div class="terminal-bar">
+          <span class="terminal-dot r"></span>
+          <span class="terminal-dot y"></span>
+          <span class="terminal-dot g"></span>
+          <span class="title">oracle_contract.sol</span>
+        </div>
+        <div class="oracle-body">
+          <div class="oracle-header">Current Values</div>
+          <div class="val-row">
+            <span class="val-label"><span class="val-dot" style="background:#39ff14"></span>Realized Vol</span>
+            <span class="val-num" id="oracleReal" style="color:#00fff2">--</span>
+          </div>
+          <div class="val-row">
+            <span class="val-label"><span class="val-dot" style="background:#00fff2"></span>Parkinson</span>
+            <span class="val-num" id="oraclePark" style="color:#39ff14">--</span>
+          </div>
+          <div class="val-row">
+            <span class="val-label"><span class="val-dot" style="background:#bd93f9"></span>Garman-Klass</span>
+            <span class="val-num" id="oracleGK" style="color:#bd93f9">--</span>
+          </div>
+          <div class="meta-row">
+            <span>Last Updated: <span id="lastUpdated">--</span></span>
+            <span class="staleness fresh" id="staleness">FRESH</span>
+          </div>
+          <div class="meta-row">
+            <span>Block: <span id="blockNum">#000000</span></span>
+            <span id="txCount" style="color:#6e7681">0 updates</span>
+          </div>
+        </div>
+      </div>
+      <div class="controls-panel">
+        <h3>Controls</h3>
+        <div class="ctrl-row">
+          <label>Window Size <span id="windowVal">30</span></label>
+          <input type="range" id="windowSlider" min="10" max="100" value="30">
+        </div>
+        <div class="ctrl-row">
+          <label>Update Threshold <span id="threshVal">1.0%</span></label>
+          <input type="range" id="threshSlider" min="1" max="50" value="10">
+        </div>
+        <div class="btn-row">
+          <button id="btnToggle" class="active">Start</button>
+          <button id="btnSpike" class="btn-spike">Inject Spike</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ---- State ----
+  var running = false;
+  var prices = [];
+  var logReturns = [];
+  var volReal = [];
+  var volPark = [];
+  var volGK = [];
+  var ohlcBars = []; // sub-window OHLC bars
+
+  var currentPrice = 70000;
+  var baseSigma = 0.0003;
+  var sigma = baseSigma;
+  var spikeTicksLeft = 0;
+
+  var windowSize = 30;
+  var threshold = 0.01;
+
+  var lastPushedReal = null;
+  var lastPushedPark = null;
+  var lastPushedGK = null;
+  var lastUpdateTime = null;
+  var updateCount = 0;
+
+  var blockNumber = 183927;
+  var blockTimer = 0;
+  var tickCount = 0;
+  var intervalId = null;
+
+  var MAX_PRICE_POINTS = 200;
+  var MAX_VOL_POINTS = 100;
+  var SUB_WINDOW = 10;
+  var TICK_MS = 200;
+
+  // Annualization factor: sqrt(ticks_per_year)
+  // 1 tick = 200ms. ticks_per_year = 252 * 24 * 3600 / 0.2
+  var ANNUALIZE = Math.sqrt(252 * 24 * 3600 / 0.2);
+
+  // ---- DOM ----
+  var priceCanvas = document.getElementById('priceCanvas');
+  var volCanvas = document.getElementById('volCanvas');
+  var priceCtx = priceCanvas.getContext('2d');
+  var volCtx = volCanvas.getContext('2d');
+
+  var elPriceVal = document.getElementById('priceVal');
+  var elOracleReal = document.getElementById('oracleReal');
+  var elOraclePark = document.getElementById('oraclePark');
+  var elOracleGK = document.getElementById('oracleGK');
+  var elLastUpdated = document.getElementById('lastUpdated');
+  var elStaleness = document.getElementById('staleness');
+  var elBlockNum = document.getElementById('blockNum');
+  var elTxCount = document.getElementById('txCount');
+  var elWindowVal = document.getElementById('windowVal');
+  var elThreshVal = document.getElementById('threshVal');
+
+  var btnToggle = document.getElementById('btnToggle');
+  var btnSpike = document.getElementById('btnSpike');
+  var windowSlider = document.getElementById('windowSlider');
+  var threshSlider = document.getElementById('threshSlider');
+
+  // ---- HiDPI Canvas Setup ----
+  function setupCanvas(canvas, h) {
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = h * dpr;
+    canvas.style.height = h + 'px';
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return { w: rect.width, h: h };
+  }
+
+  var priceDim, volDim;
+  function resizeCanvases() {
+    priceDim = setupCanvas(priceCanvas, 180);
+    volDim = setupCanvas(volCanvas, 180);
+  }
+  resizeCanvases();
+  window.addEventListener('resize', resizeCanvases);
+
+  // ---- Random ----
+  function randn() {
+    var u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  }
+
+  // ---- Price Generation (GBM + Jumps) ----
+  function nextPrice() {
+    var z = randn();
+    var jump = 0;
+    if (Math.random() < 0.05) {
+      jump = randn() * 0.001;
+    }
+    currentPrice = currentPrice * Math.exp(sigma * z + jump);
+    return currentPrice;
+  }
+
+  // ---- Volatility Estimators ----
+  function computeRealizedVol(returns, win) {
+    if (returns.length < win) return NaN;
+    var slice = returns.slice(-win);
+    var mean = 0;
+    for (var i = 0; i < slice.length; i++) mean += slice[i];
+    mean /= slice.length;
+    var variance = 0;
+    for (var i = 0; i < slice.length; i++) {
+      var d = slice[i] - mean;
+      variance += d * d;
+    }
+    variance /= (slice.length - 1);
+    return Math.sqrt(variance) * ANNUALIZE;
+  }
+
+  function computeParkinson(bars, win) {
+    if (bars.length < win) return NaN;
+    var slice = bars.slice(-win);
+    var sum = 0;
+    for (var i = 0; i < slice.length; i++) {
+      var hl = Math.log(slice[i].high / slice[i].low);
+      sum += hl * hl;
+    }
+    var n = slice.length;
+    return Math.sqrt(sum / (4 * n * Math.LN2)) * ANNUALIZE;
+  }
+
+  function computeGarmanKlass(bars, win) {
+    if (bars.length < win) return NaN;
+    var slice = bars.slice(-win);
+    var sum = 0;
+    for (var i = 0; i < slice.length; i++) {
+      var b = slice[i];
+      var hl = Math.log(b.high / b.low);
+      var co = Math.log(b.close / b.open);
+      sum += 0.5 * hl * hl - (2 * Math.LN2 - 1) * co * co;
+    }
+    var val = sum / slice.length;
+    return Math.sqrt(Math.abs(val)) * ANNUALIZE;
+  }
+
+  // ---- Current OHLC bar tracking ----
+  var currentBar = null;
+  var barTickCount = 0;
+
+  function resetBar(price) {
+    currentBar = { open: price, high: price, low: price, close: price };
+    barTickCount = 0;
+  }
+
+  function updateBar(price) {
+    if (!currentBar) { resetBar(price); return; }
+    currentBar.high = Math.max(currentBar.high, price);
+    currentBar.low = Math.min(currentBar.low, price);
+    currentBar.close = price;
+    barTickCount++;
+    if (barTickCount >= SUB_WINDOW) {
+      ohlcBars.push({
+        open: currentBar.open,
+        high: currentBar.high,
+        low: currentBar.low,
+        close: currentBar.close
+      });
+      if (ohlcBars.length > 500) ohlcBars = ohlcBars.slice(-300);
+      resetBar(price);
+    }
+  }
+
+  // ---- Oracle Update Logic ----
+  function shouldPush(newVal, lastVal) {
+    if (lastVal === null || isNaN(lastVal) || lastVal === 0) return true;
+    if (isNaN(newVal)) return false;
+    return Math.abs(newVal - lastVal) / lastVal > threshold;
+  }
+
+  function tryOracleUpdate(rv, pk, gk) {
+    var pushed = false;
+    if (shouldPush(rv, lastPushedReal)) { lastPushedReal = rv; pushed = true; }
+    if (shouldPush(pk, lastPushedPark)) { lastPushedPark = pk; pushed = true; }
+    if (shouldPush(gk, lastPushedGK)) { lastPushedGK = gk; pushed = true; }
+    if (pushed) {
+      lastUpdateTime = Date.now();
+      updateCount++;
+    }
+  }
+
+  // ---- Drawing ----
+  function drawPriceChart() {
+    var ctx = priceCtx;
+    var w = priceDim.w;
+    var h = priceDim.h;
+    ctx.clearRect(0, 0, w, h);
+
+    if (prices.length < 2) return;
+
+    var data = prices.slice(-MAX_PRICE_POINTS);
+    var min = Infinity, max = -Infinity;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i] < min) min = data[i];
+      if (data[i] > max) max = data[i];
+    }
+    var pad = (max - min) * 0.1 || 1;
+    min -= pad; max += pad;
+
+    // Grid
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 0.5;
+    for (var g = 0; g < 4; g++) {
+      var gy = h * 0.1 + (h * 0.8) * g / 3;
+      ctx.beginPath();
+      ctx.moveTo(0, gy);
+      ctx.lineTo(w, gy);
+      ctx.stroke();
+    }
+
+    // Y-axis labels
+    ctx.fillStyle = '#484f58';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'right';
+    for (var g = 0; g < 4; g++) {
+      var gy = h * 0.1 + (h * 0.8) * g / 3;
+      var val = max - (max - min) * (g / 3);
+      ctx.fillText(val.toFixed(0), w - 4, gy - 2);
+    }
+
+    // Price line
+    ctx.strokeStyle = '#00fff2';
+    ctx.lineWidth = 1.5;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for (var i = 0; i < data.length; i++) {
+      var x = (i / (MAX_PRICE_POINTS - 1)) * w;
+      var y = h * 0.1 + (1 - (data[i] - min) / (max - min)) * h * 0.8;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Glow
+    ctx.strokeStyle = 'rgba(0,255,242,0.15)';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    for (var i = 0; i < data.length; i++) {
+      var x = (i / (MAX_PRICE_POINTS - 1)) * w;
+      var y = h * 0.1 + (1 - (data[i] - min) / (max - min)) * h * 0.8;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  function drawVolChart() {
+    var ctx = volCtx;
+    var w = volDim.w;
+    var h = volDim.h;
+    ctx.clearRect(0, 0, w, h);
+
+    var allData = [volReal.slice(-MAX_VOL_POINTS), volPark.slice(-MAX_VOL_POINTS), volGK.slice(-MAX_VOL_POINTS)];
+    var maxLen = 0;
+    for (var d = 0; d < allData.length; d++) {
+      if (allData[d].length > maxLen) maxLen = allData[d].length;
+    }
+    if (maxLen < 2) return;
+
+    // Find range across all series
+    var min = Infinity, max = -Infinity;
+    for (var d = 0; d < allData.length; d++) {
+      for (var i = 0; i < allData[d].length; i++) {
+        var v = allData[d][i];
+        if (isNaN(v)) continue;
+        if (v < min) min = v;
+        if (v > max) max = v;
+      }
+    }
+    if (min === Infinity) return;
+    var pad = (max - min) * 0.15 || 0.01;
+    min = Math.max(0, min - pad); max += pad;
+
+    // Grid
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 0.5;
+    for (var g = 0; g < 4; g++) {
+      var gy = h * 0.1 + (h * 0.8) * g / 3;
+      ctx.beginPath();
+      ctx.moveTo(0, gy);
+      ctx.lineTo(w, gy);
+      ctx.stroke();
+    }
+
+    // Y-axis labels
+    ctx.fillStyle = '#484f58';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'right';
+    for (var g = 0; g < 4; g++) {
+      var gy = h * 0.1 + (h * 0.8) * g / 3;
+      var val = max - (max - min) * (g / 3);
+      ctx.fillText((val * 100).toFixed(1) + '%', w - 4, gy - 2);
+    }
+
+    var colors = ['#00fff2', '#39ff14', '#bd93f9'];
+    var dashes = [[], [6, 3], [2, 3]];
+    var widths = [1.5, 1.2, 1.2];
+
+    for (var d = 0; d < allData.length; d++) {
+      var data = allData[d];
+      if (data.length < 2) continue;
+
+      ctx.strokeStyle = colors[d];
+      ctx.lineWidth = widths[d];
+      ctx.setLineDash(dashes[d]);
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      var started = false;
+      for (var i = 0; i < data.length; i++) {
+        if (isNaN(data[i])) { started = false; continue; }
+        var x = (i / (MAX_VOL_POINTS - 1)) * w;
+        var y = h * 0.1 + (1 - (data[i] - min) / (max - min)) * h * 0.8;
+        if (!started) { ctx.moveTo(x, y); started = true; }
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  // ---- Format Helpers ----
+  function fmtVol(v) {
+    if (v === null || isNaN(v)) return '--';
+    return v.toFixed(5);
+  }
+
+  function updateUI() {
+    elPriceVal.textContent = currentPrice.toFixed(2);
+
+    elOracleReal.textContent = fmtVol(lastPushedReal);
+    elOraclePark.textContent = fmtVol(lastPushedPark);
+    elOracleGK.textContent = fmtVol(lastPushedGK);
+
+    // Last updated
+    if (lastUpdateTime) {
+      var ago = ((Date.now() - lastUpdateTime) / 1000).toFixed(0);
+      elLastUpdated.textContent = ago + 's ago';
+      if (parseInt(ago) > 30) {
+        elStaleness.textContent = 'STALE';
+        elStaleness.className = 'staleness stale';
+      } else {
+        elStaleness.textContent = 'FRESH';
+        elStaleness.className = 'staleness fresh';
+      }
+    }
+
+    elBlockNum.textContent = '#' + String(blockNumber).padStart(6, '0');
+    elTxCount.textContent = updateCount + ' updates';
+
+    // Spike button state
+    if (spikeTicksLeft > 0) {
+      btnSpike.classList.add('firing');
+      btnSpike.textContent = 'Spike: ' + spikeTicksLeft;
+    } else {
+      btnSpike.classList.remove('firing');
+      btnSpike.textContent = 'Inject Spike';
+    }
+  }
+
+  // ---- Main Tick ----
+  function tick() {
+    tickCount++;
+
+    // Block number increments roughly every 12 seconds (60 ticks at 200ms)
+    blockTimer++;
+    if (blockTimer >= 60) {
+      blockTimer = 0;
+      blockNumber++;
+    }
+
+    // Spike handling
+    if (spikeTicksLeft > 0) {
+      sigma = baseSigma * 10;
+      spikeTicksLeft--;
+      if (spikeTicksLeft === 0) sigma = baseSigma;
+    }
+
+    // Generate price
+    var p = nextPrice();
+    prices.push(p);
+    if (prices.length > MAX_PRICE_POINTS + 50) prices = prices.slice(-MAX_PRICE_POINTS);
+
+    // Log returns
+    if (prices.length >= 2) {
+      var lr = Math.log(prices[prices.length - 1] / prices[prices.length - 2]);
+      logReturns.push(lr);
+      if (logReturns.length > 500) logReturns = logReturns.slice(-300);
+    }
+
+    // Update OHLC bar
+    updateBar(p);
+
+    // Compute volatilities
+    var rv = computeRealizedVol(logReturns, windowSize);
+    var pk = computeParkinson(ohlcBars, windowSize);
+    var gk = computeGarmanKlass(ohlcBars, windowSize);
+
+    volReal.push(rv);
+    volPark.push(pk);
+    volGK.push(gk);
+    if (volReal.length > MAX_VOL_POINTS + 50) {
+      volReal = volReal.slice(-MAX_VOL_POINTS);
+      volPark = volPark.slice(-MAX_VOL_POINTS);
+      volGK = volGK.slice(-MAX_VOL_POINTS);
+    }
+
+    // Oracle push check
+    tryOracleUpdate(rv, pk, gk);
+
+    // Draw
+    drawPriceChart();
+    drawVolChart();
+    updateUI();
+  }
+
+  // ---- Controls ----
+  btnToggle.addEventListener('click', function() {
+    if (running) {
+      clearInterval(intervalId);
+      intervalId = null;
+      running = false;
+      btnToggle.textContent = 'Start';
+      btnToggle.classList.add('active');
+    } else {
+      running = true;
+      intervalId = setInterval(tick, TICK_MS);
+      btnToggle.textContent = 'Stop';
+      btnToggle.classList.remove('active');
+    }
+  });
+
+  btnSpike.addEventListener('click', function() {
+    if (!running) return;
+    spikeTicksLeft = 50;
+  });
+
+  windowSlider.addEventListener('input', function() {
+    windowSize = parseInt(this.value);
+    elWindowVal.textContent = windowSize;
+  });
+
+  threshSlider.addEventListener('input', function() {
+    var raw = parseInt(this.value);
+    threshold = raw / 1000;
+    elThreshVal.textContent = (threshold * 100).toFixed(1) + '%';
+  });
+
+  // Initial draw of empty canvases
+  drawPriceChart();
+  drawVolChart();
+  updateUI();
+})();
+</script>
+</body>
+</html>

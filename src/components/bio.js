@@ -1,13 +1,8 @@
-/**
- * Bio component that queries for data
- * with Gatsby's useStaticQuery component
- *
- * See: https://www.gatsbyjs.org/docs/use-static-query/
- */
 import React from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import Image from "gatsby-image"
 import styled from "styled-components"
+import { mainColor, accentColor, textColor, grayColor } from "../utils/color"
 import { rhythm, scale } from "../utils/typography"
 
 const BioInner = ({ className }) => {
@@ -36,33 +31,36 @@ const BioInner = ({ className }) => {
 
   const { author, social } = data.site.siteMetadata
   return (
-    <div class={className}>
-      <a 
-       href={`https://twitter.com/${social.twitter}`}
-       target="_blank"
-       rel="external noopener"
-      >
-      <Image
-          fixed={data.avatar.childImageSharp.fixed}
-          alt={author.name}
-          style={{
-            marginRight: rhythm(1 / 2),
-            marginBottom: 0,
-            minWidth: 50,
-            borderRadius: `100%`,
-          }}
-          imgStyle={{
-            margin: "0",
-            borderRadius: `50%`,
-          }}
-        />
-      </a>
-      <div>
+    <div className={className}>
+      <div className="bio-label">$ whoami</div>
+      <div className="bio-content">
+        <a
+          href={`https://twitter.com/${social.twitter}`}
+          target="_blank"
+          rel="external noopener"
+        >
+          <Image
+            fixed={data.avatar.childImageSharp.fixed}
+            alt={author.name}
+            style={{
+              marginRight: rhythm(1 / 2),
+              marginBottom: 0,
+              minWidth: 50,
+              borderRadius: `100%`,
+            }}
+            imgStyle={{
+              margin: "0",
+              borderRadius: `50%`,
+            }}
+          />
+        </a>
         <div>
+          <div>
             Written by <b>{author.name}</b> {author.summary}
-        </div>
-        <div>
-          <a href={`https://twitter.com/${social.twitter}`}>twitter</a>
+          </div>
+          <div>
+            <a href={`https://twitter.com/${social.twitter}`}>twitter</a>
+          </div>
         </div>
       </div>
     </div>
@@ -70,26 +68,51 @@ const BioInner = ({ className }) => {
 }
 
 const Bio = styled(BioInner)`
-display: flex;
-align-items: center;
-padding: ${rhythm(1)} ${rhythm(0.25)};
-margin-top: ${rhythm(0.5)};
-margin-left: ${rhythm(0.20)};
-margin-right: ${rhythm(0.20)};
-font-style: italic;
-color: var(--fg-color);
-background-color: var(--fg-article-color);
-border-radius: ${rhythm(0.5)};
-${scale(0)};
-box-shadow:
-  0 1.9px 2.5px rgba(0, 0, 0, 0.057),
-  0 5px 6.1px rgba(0, 0, 0, 0.076),
-  0 10.1px 11.4px rgba(0, 0, 0, 0.086),
-  0 19.2px 19.8px rgba(0, 0, 0, 0.092),
-  0 38.4px 34.8px rgba(0, 0, 0, 0.1),
-  0 101px 74px rgba(0, 0, 0, 0.13);
-& > a {
-  line-height: 0;
-}
+  position: relative;
+  padding: ${rhythm(1.5)} ${rhythm(0.5)} ${rhythm(0.75)};
+  margin-top: ${rhythm(0.5)};
+  margin-left: ${rhythm(0.20)};
+  margin-right: ${rhythm(0.20)};
+  color: ${textColor.secondary};
+  background-color: ${mainColor.dark};
+  border: 1px solid ${grayColor.border};
+  border-radius: 2px;
+  ${scale(-0.1)};
+
+  & .bio-label {
+    position: absolute;
+    top: ${rhythm(0.25)};
+    left: ${rhythm(0.5)};
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.7em;
+    color: ${accentColor.secondary};
+    opacity: 0.7;
+  }
+
+  & .bio-content {
+    display: flex;
+    align-items: center;
+  }
+
+  & > .bio-content > a {
+    line-height: 0;
+    border-bottom: none;
+    &:hover {
+      border-bottom: none;
+    }
+  }
+
+  & img {
+    border: 2px solid ${accentColor.primary} !important;
+  }
+
+  & b {
+    color: ${accentColor.primary};
+  }
+
+  & a {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.85em;
+  }
 `
 export default Bio

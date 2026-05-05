@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Self-Exciting Jump-Diffusion Simulator</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0d1117;
+  color: #e6edf3;
+  font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', 'Cascadia Code', Consolas, 'Courier New', monospace;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.2em;
+  margin-bottom: 16px;
+  color: #e6edf3;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.model-buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.model-btn {
+  flex: 1;
+  padding: 10px 12px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  color: #8b949e;
+  font-family: inherit;
+  font-size: 0.85em;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.model-btn:hover {
+  border-color: #484f58;
+  color: #e6edf3;
+}
+
+.model-btn.active {
+  border-color: #00fff2;
+  color: #00fff2;
+  box-shadow: 0 0 8px rgba(0, 255, 242, 0.3);
+}
+
+.params-section {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+}
+
+.param-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 10px;
+}
+
+.param-row:last-child {
+  margin-bottom: 0;
+}
+
+.param-label {
+  min-width: 140px;
+  font-size: 0.8em;
+  color: #8b949e;
+}
+
+.param-value {
+  min-width: 70px;
+  text-align: right;
+  font-size: 0.8em;
+  color: #e6edf3;
+}
+
+input[type="range"] {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #30363d;
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00fff2;
+  cursor: pointer;
+  border: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #00fff2;
+  cursor: pointer;
+  border: none;
+}
+
+.param-group {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.param-group.hidden {
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.param-group.visible {
+  max-height: 200px;
+  opacity: 1;
+}
+
+.simulate-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: #161b22;
+  border: 1px solid #00fff2;
+  color: #00fff2;
+  font-family: inherit;
+  font-size: 0.9em;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+}
+
+.simulate-btn:hover {
+  background: rgba(0, 255, 242, 0.1);
+  box-shadow: 0 0 12px rgba(0, 255, 242, 0.3);
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  background: #0d1117;
+}
+
+.stats-panel {
+  text-align: center;
+  font-size: 0.8em;
+  color: #8b949e;
+  padding: 8px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+}
+
+.stats-panel span {
+  color: #e6edf3;
+}
+</style>
+</head>
+<body>
+
+<h1>Self-Exciting Jump-Diffusion Simulator</h1>
+
+<div class="model-buttons">
+  <button class="model-btn active" data-model="gbm">Vanilla GBM</button>
+  <button class="model-btn" data-model="kou">Kou</button>
+  <button class="model-btn" data-model="excited">Excited Kou v2</button>
+</div>
+
+<div class="params-section">
+  <div class="param-row">
+    <span class="param-label">&sigma; (volatility)</span>
+    <input type="range" id="sigma" min="0.001" max="0.01" step="0.0005" value="0.003">
+    <span class="param-value" id="sigma-val">0.003</span>
+  </div>
+  <div class="param-row">
+    <span class="param-label">S&#8320; (initial price)</span>
+    <input type="range" id="s0" min="69000" max="71000" step="100" value="70000">
+    <span class="param-value" id="s0-val">70000</span>
+  </div>
+  <div class="param-row">
+    <span class="param-label">T (seconds)</span>
+    <input type="range" id="T" min="100" max="600" step="50" value="300" disabled>
+    <span class="param-value" id="T-val">300</span>
+  </div>
+
+  <div class="param-group hidden" id="kou-params">
+    <div class="param-row">
+      <span class="param-label">&lambda;_base (jump rate)</span>
+      <input type="range" id="lambda" min="0" max="3" step="0.1" value="1.0">
+      <span class="param-value" id="lambda-val">1.00</span>
+    </div>
+    <div class="param-row">
+      <span class="param-label">&eta; (inv. jump size)</span>
+      <input type="range" id="eta" min="50" max="500" step="10" value="200">
+      <span class="param-value" id="eta-val">200</span>
+    </div>
+  </div>
+
+  <div class="param-group hidden" id="excited-params">
+    <div class="param-row">
+      <span class="param-label">&alpha; (self-excitation)</span>
+      <input type="range" id="alpha" min="0" max="2" step="0.05" value="0.8">
+      <span class="param-value" id="alpha-val">0.80</span>
+    </div>
+    <div class="param-row">
+      <span class="param-label">&delta; (dir. persistence)</span>
+      <input type="range" id="delta" min="0" max="0.3" step="0.01" value="0.15">
+      <span class="param-value" id="delta-val">0.15</span>
+    </div>
+  </div>
+</div>
+
+<button class="simulate-btn" id="simulate-btn">Simulate</button>
+
+<canvas id="price-canvas" height="250"></canvas>
+<canvas id="hist-canvas" height="200"></canvas>
+
+<div class="stats-panel" id="stats-panel">
+  Kurtosis: <span id="kurtosis">--</span> | ACF(1): <span id="acf1">--</span>
+</div>
+
+<script>
+(function() {
+  // State
+  let currentModel = 'gbm';
+  let prices = [];
+  let logReturns = [];
+  let jumpIndices = [];
+
+  // DOM refs
+  const priceCanvas = document.getElementById('price-canvas');
+  const histCanvas = document.getElementById('hist-canvas');
+  const priceCtx = priceCanvas.getContext('2d');
+  const histCtx = histCanvas.getContext('2d');
+  const statsPanel = document.getElementById('stats-panel');
+
+  // Colors per model
+  const modelColors = {
+    gbm: '#bd93f9',
+    kou: '#39ff14',
+    excited: '#00fff2'
+  };
+
+  // Resize canvases for high DPI
+  function resizeCanvas(canvas, height) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.height = height + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    return { w: rect.width, h: height };
+  }
+
+  // Box-Muller normal
+  function randn() {
+    let u1 = Math.random();
+    let u2 = Math.random();
+    while (u1 === 0) u1 = Math.random();
+    return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+  }
+
+  // Laplace random variable with scale b
+  function laplace(b) {
+    const u = Math.random() - 0.5;
+    return -b * Math.sign(u) * Math.log(1 - 2 * Math.abs(u));
+  }
+
+  // Get parameters
+  function getParams() {
+    return {
+      sigma: parseFloat(document.getElementById('sigma').value),
+      s0: parseFloat(document.getElementById('s0').value),
+      T: parseFloat(document.getElementById('T').value),
+      lambda: parseFloat(document.getElementById('lambda').value),
+      eta: parseFloat(document.getElementById('eta').value),
+      alpha: parseFloat(document.getElementById('alpha').value),
+      delta: parseFloat(document.getElementById('delta').value)
+    };
+  }
+
+  // Simulation
+  function simulate() {
+    const p = getParams();
+    const dt = 0.5;
+    const steps = Math.floor(p.T / dt);
+    prices = [p.s0];
+    logReturns = [];
+    jumpIndices = [];
+
+    let prevHadJump = false;
+    let prevJumpSign = 0;
+
+    for (let i = 0; i < steps; i++) {
+      const z = randn();
+      let diffusion = p.sigma * Math.sqrt(dt) * z;
+      let jumpComponent = 0;
+      let hadJump = false;
+      let jumpSign = 0;
+
+      if (currentModel === 'kou' || currentModel === 'excited') {
+        let lambda_t = p.lambda;
+
+        if (currentModel === 'excited' && prevHadJump) {
+          lambda_t = p.lambda + p.alpha;
+        }
+
+        // Poisson: probability of at least one jump in dt
+        const jumpProb = 1 - Math.exp(-lambda_t * dt);
+
+        if (Math.random() < jumpProb) {
+          hadJump = true;
+          jumpIndices.push(i + 1);
+
+          if (currentModel === 'excited') {
+            let pUp = 0.5;
+            if (prevHadJump) {
+              pUp = 0.5 + p.delta * prevJumpSign;
+            }
+            const direction = (Math.random() < pUp) ? 1 : -1;
+            const absJump = Math.abs(laplace(1.0 / p.eta));
+            jumpComponent = direction * absJump;
+            jumpSign = direction;
+          } else {
+            // Kou: Laplace (double-exponential)
+            jumpComponent = laplace(1.0 / p.eta);
+            jumpSign = Math.sign(jumpComponent);
+          }
+        }
+      }
+
+      const logReturn = diffusion + jumpComponent;
+      const newPrice = prices[i] * Math.exp(logReturn);
+      prices.push(newPrice);
+      logReturns.push(logReturn);
+
+      prevHadJump = hadJump;
+      if (hadJump) prevJumpSign = jumpSign;
+    }
+
+    drawPrice();
+    drawHistogram();
+    computeStats();
+  }
+
+  // Draw price path
+  function drawPrice() {
+    const { w, h } = resizeCanvas(priceCanvas, 250);
+    const ctx = priceCtx;
+    const pad = { top: 20, bottom: 30, left: 60, right: 20 };
+    const plotW = w - pad.left - pad.right;
+    const plotH = h - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, w, h);
+
+    if (prices.length < 2) return;
+
+    const minP = Math.min(...prices);
+    const maxP = Math.max(...prices);
+    const range = maxP - minP || 1;
+
+    // Grid lines
+    ctx.strokeStyle = '#21262d';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= 4; i++) {
+      const y = pad.top + (plotH * i) / 4;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(w - pad.right, y);
+      ctx.stroke();
+    }
+
+    // Y-axis labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= 4; i++) {
+      const val = maxP - (range * i) / 4;
+      const y = pad.top + (plotH * i) / 4;
+      ctx.fillText(val.toFixed(0), pad.left - 8, y + 3);
+    }
+
+    // X-axis label
+    ctx.textAlign = 'center';
+    ctx.fillText('Time (s)', w / 2, h - 5);
+
+    // X-axis ticks
+    const p = getParams();
+    const totalT = p.T;
+    for (let t = 0; t <= totalT; t += 60) {
+      const x = pad.left + (t / totalT) * plotW;
+      ctx.fillText(t.toString(), x, h - pad.bottom + 15);
+    }
+
+    // Price line
+    const color = modelColors[currentModel];
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = 0; i < prices.length; i++) {
+      const x = pad.left + (i / (prices.length - 1)) * plotW;
+      const y = pad.top + (1 - (prices[i] - minP) / range) * plotH;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Jump markers
+    if (jumpIndices.length > 0) {
+      ctx.fillStyle = '#ff6e40';
+      for (const idx of jumpIndices) {
+        if (idx < prices.length) {
+          const x = pad.left + (idx / (prices.length - 1)) * plotW;
+          const y = pad.top + (1 - (prices[idx] - minP) / range) * plotH;
+          ctx.beginPath();
+          ctx.arc(x, y, 3, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+      }
+    }
+
+    // Title
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('Price Path', pad.left, 14);
+  }
+
+  // Draw histogram
+  function drawHistogram() {
+    const { w, h } = resizeCanvas(histCanvas, 200);
+    const ctx = histCtx;
+    const pad = { top: 20, bottom: 30, left: 50, right: 20 };
+    const plotW = w - pad.left - pad.right;
+    const plotH = h - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, w, h);
+
+    if (logReturns.length < 2) return;
+
+    // Compute histogram
+    const numBins = 50;
+    const minR = Math.min(...logReturns);
+    const maxR = Math.max(...logReturns);
+    const range = maxR - minR || 1;
+    const binWidth = range / numBins;
+    const bins = new Array(numBins).fill(0);
+
+    for (const r of logReturns) {
+      let bin = Math.floor((r - minR) / binWidth);
+      if (bin >= numBins) bin = numBins - 1;
+      if (bin < 0) bin = 0;
+      bins[bin]++;
+    }
+
+    // Normalize to density
+    const totalCount = logReturns.length;
+    const density = bins.map(b => b / (totalCount * binWidth));
+    const maxDensity = Math.max(...density);
+
+    // Draw bars
+    const color = modelColors[currentModel];
+    ctx.fillStyle = color + '66';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 0.5;
+
+    for (let i = 0; i < numBins; i++) {
+      const x = pad.left + (i / numBins) * plotW;
+      const barW = plotW / numBins;
+      const barH = (density[i] / maxDensity) * plotH;
+      const y = pad.top + plotH - barH;
+      ctx.fillRect(x, y, barW - 1, barH);
+      ctx.strokeRect(x, y, barW - 1, barH);
+    }
+
+    // Gaussian overlay
+    const mean = logReturns.reduce((a, b) => a + b, 0) / totalCount;
+    const variance = logReturns.reduce((a, b) => a + (b - mean) * (b - mean), 0) / totalCount;
+    const std = Math.sqrt(variance);
+
+    ctx.strokeStyle = '#bd93f9';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    for (let i = 0; i <= plotW; i++) {
+      const xVal = minR + (i / plotW) * range;
+      const gaussDensity = (1 / (std * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * ((xVal - mean) / std) ** 2);
+      const y = pad.top + plotH - (gaussDensity / maxDensity) * plotH;
+      const x = pad.left + i;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Axes labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Log Return', w / 2, h - 5);
+
+    // X-axis ticks
+    for (let i = 0; i <= 4; i++) {
+      const val = minR + (range * i) / 4;
+      const x = pad.left + (i / 4) * plotW;
+      ctx.fillText(val.toFixed(4), x, h - pad.bottom + 15);
+    }
+
+    // Title + legend
+    ctx.textAlign = 'left';
+    ctx.font = '11px monospace';
+    ctx.fillText('Log Return Distribution', pad.left, 14);
+
+    // Legend
+    ctx.fillStyle = '#bd93f9';
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.moveTo(w - pad.right - 100, 10);
+    ctx.lineTo(w - pad.right - 75, 10);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '9px monospace';
+    ctx.fillText('Gaussian', w - pad.right - 70, 13);
+  }
+
+  // Compute stats
+  function computeStats() {
+    if (logReturns.length < 4) return;
+
+    const n = logReturns.length;
+    const mean = logReturns.reduce((a, b) => a + b, 0) / n;
+    const m2 = logReturns.reduce((a, b) => a + (b - mean) ** 2, 0) / n;
+    const m4 = logReturns.reduce((a, b) => a + (b - mean) ** 4, 0) / n;
+    const kurtosis = m4 / (m2 * m2);
+
+    // ACF lag-1
+    const demeaned = logReturns.map(r => r - mean);
+    let num = 0;
+    let den = 0;
+    for (let i = 0; i < n; i++) {
+      den += demeaned[i] * demeaned[i];
+      if (i < n - 1) {
+        num += demeaned[i] * demeaned[i + 1];
+      }
+    }
+    const acf1 = den > 0 ? num / den : 0;
+
+    document.getElementById('kurtosis').textContent = kurtosis.toFixed(2);
+    document.getElementById('acf1').textContent = acf1.toFixed(3);
+  }
+
+  // Model button handling
+  const buttons = document.querySelectorAll('.model-btn');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      buttons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      currentModel = this.dataset.model;
+      updateParamVisibility();
+      simulate();
+    });
+  });
+
+  function updateParamVisibility() {
+    const kouParams = document.getElementById('kou-params');
+    const excitedParams = document.getElementById('excited-params');
+
+    if (currentModel === 'gbm') {
+      kouParams.classList.remove('visible');
+      kouParams.classList.add('hidden');
+      excitedParams.classList.remove('visible');
+      excitedParams.classList.add('hidden');
+    } else if (currentModel === 'kou') {
+      kouParams.classList.remove('hidden');
+      kouParams.classList.add('visible');
+      excitedParams.classList.remove('visible');
+      excitedParams.classList.add('hidden');
+    } else {
+      kouParams.classList.remove('hidden');
+      kouParams.classList.add('visible');
+      excitedParams.classList.remove('hidden');
+      excitedParams.classList.add('visible');
+    }
+  }
+
+  // Slider value display
+  const sliders = [
+    { id: 'sigma', valId: 'sigma-val', fmt: v => parseFloat(v).toFixed(4) },
+    { id: 's0', valId: 's0-val', fmt: v => parseInt(v).toString() },
+    { id: 'T', valId: 'T-val', fmt: v => parseInt(v).toString() },
+    { id: 'lambda', valId: 'lambda-val', fmt: v => parseFloat(v).toFixed(2) },
+    { id: 'eta', valId: 'eta-val', fmt: v => parseInt(v).toString() },
+    { id: 'alpha', valId: 'alpha-val', fmt: v => parseFloat(v).toFixed(2) },
+    { id: 'delta', valId: 'delta-val', fmt: v => parseFloat(v).toFixed(2) }
+  ];
+
+  sliders.forEach(s => {
+    const el = document.getElementById(s.id);
+    const valEl = document.getElementById(s.valId);
+    el.addEventListener('input', () => {
+      valEl.textContent = s.fmt(el.value);
+    });
+  });
+
+  // Simulate button
+  document.getElementById('simulate-btn').addEventListener('click', simulate);
+
+  // Handle resize
+  window.addEventListener('resize', () => {
+    if (prices.length > 0) {
+      drawPrice();
+      drawHistogram();
+    }
+  });
+
+  // Initial simulation
+  simulate();
+})();
+</script>
+</body>
+</html>
