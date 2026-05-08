@@ -8,9 +8,7 @@ module.exports = {
     description: `none`,
     siteUrl: `https://epic-golick-eb81d7.netlify.app/`,
     pathPrefix: `/article_headers`,
-    social: {
-      twitter: `bkaclub`
-    }
+    social: {}
   },
   plugins: [
     {
