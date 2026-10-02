@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#122e62"><meta name="description" content="方向を覚える、ひと文字・ことば・1分チャレンジ。毎日5分のフリック練習。">
+<title>フリック日和 | 毎日5分のかな練習</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='17' fill='%23122e62'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='sans-serif' font-size='43' font-weight='700' fill='%23e3f67b'%3Eあ%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<header class="site-header"><div class="brand"><span class="brand-mark" aria-hidden="true">あ</span><span>フリック日和<small>毎日5分、指に覚えさせる。</small></span></div><button id="helpBtn" class="icon-button" aria-label="練習の使い方">?</button></header>
+<main class="layout">
+<section class="practice" aria-label="フリック練習">
+<div class="section-eyebrow">TODAY'S PRACTICE <span>焦らず、正確に。</span></div>
+<div class="modes" role="group" aria-label="練習モード">
+<button class="mode active" data-mode="single" aria-pressed="true"><span>01</span><strong>ひと文字</strong><small>方向を覚える · 5分</small></button>
+<button class="mode" data-mode="words" aria-pressed="false"><span>02</span><strong>ことば</strong><small>動きをつなぐ · 5分</small></button>
+<button class="mode" data-mode="speed" aria-pressed="false"><span>03</span><strong>1分チャレンジ</strong><small>今の速さを知る</small></button>
+</div>
+<div class="input-options"><div class="input-switch" role="group" aria-label="入力方法"><button data-input="custom" aria-pressed="true" class="active">練習キー</button><button data-input="native" aria-pressed="false">iPhoneのキーボード</button></div><label class="switch"><input type="checkbox" id="hintToggle" checked><span class="switch-track"></span>ヒント</label></div>
+<div class="training-panel" id="trainingPanel">
+<div class="session-top"><span id="phaseLabel" class="phase-label">ひと文字 · 基本のかな</span><span class="timer" id="timer" aria-label="残り5分"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="11" r="7"/><path d="M8 1h4M10 5v6l3 2"/></svg><span id="timeValue">5:00</span></span></div>
+<div class="time-track"><span id="timeBar"></span></div>
+<div class="prompt-area" id="promptArea"><p id="promptCaption">このかなを入力</p><div id="target" class="target" aria-label="お題"></div><div class="hint-line" id="hintLine"></div></div>
+<div class="feedback" id="feedback" aria-live="polite">最初は速さより、正確さを。</div>
+<div class="session-metrics"><div><strong id="correctCount">0</strong><span>正解文字</span></div><div><strong id="accuracyValue">—<small>%</small></strong><span>正確率</span></div><div><strong id="cpmValue">—</strong><span>正解文字 / 分</span></div></div>
+<div id="nativeArea" class="native-area" hidden><label for="nativeInput">ひらがなで入力し、確定してください</label><input id="nativeInput" type="text" inputmode="text" lang="ja" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="ここをタップして入力" disabled><small>日本語かなキーボードを選択。漢字に変換せず確定します。</small></div>
+<div class="session-controls"><button class="primary-button" id="startBtn"><span id="startLabel">練習をはじめる</span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 8 6-8 6Z"/></svg></button><button class="secondary-button" id="finishBtn" hidden>終了して記録</button><button class="text-button" id="resetBtn" hidden>やり直す</button></div>
+</div>
+<div class="keypad-section" id="keypadSection"><div class="keypad-caption"><span>練習用フリックキー</span><span id="keypadStatus">開始後、押してすべらせる</span></div><div class="keypad" id="keypad" aria-label="練習用かなキーボード"></div><p class="keypad-note">連打では切り替わりません。濁点・小文字は、元のかな →「小゛゜」</p></div>
+<div class="practice-footer"><label class="switch" id="extendedOption"><input type="checkbox" id="extendedToggle"><span class="switch-track"></span>濁点・小文字も練習</label><span id="modeAdvice">同じ方向を、ゆっくり確実に。</span></div>
+</section>
+<aside class="sidebar">
+<section class="daily-card" aria-labelledby="dailyHeading"><div class="card-heading"><h2 id="dailyHeading">今日の積み重ね</h2><span id="todayDate"></span></div><div class="daily-total"><strong id="todayMinutes">0<small>分</small></strong><span>目安は1日5分<br>短くても、続けた分だけ。</span></div><div class="daily-track"><span id="dailyBar"></span></div><div class="daily-details"><span>正解 <b id="todayCorrect">0</b> 文字</span><span>正確率 <b id="todayAccuracy">—</b></span></div><div class="week-head"><h3>最近7日間</h3><span>練習時間</span></div><div id="weekChart" class="week-chart" aria-label="最近7日間の練習時間"></div><p class="private-note" id="storageNote">記録は、このブラウザにだけ保存されます。</p></section>
+<section class="compass-card"><div class="card-heading"><h2>まずは、5つの方向</h2><span class="small-badge">基本</span></div><div class="compass" aria-label="中央あ、左い、上う、右え、下お"><div class="compass-up"><b>う</b><small>上</small></div><div class="compass-left"><b>い</b><small>左</small></div><div class="compass-center"><b>あ</b><small>そのまま</small></div><div class="compass-right"><b>え</b><small>右</small></div><div class="compass-down"><b>お</b><small>下</small></div></div><p>か行も、さ行も、方向は同じ。<br>「や」「わ」行はヒントで確認。</p></section>
+<section class="records-card"><div class="card-heading"><h2>練習の記録</h2><span id="sessionCount">0回</span></div><div id="bestScore" class="best-score"></div><ol id="history" class="history"></ol><p class="record-method">正確率＝正解文字 ÷ 判定した文字<br>正解文字/分＝正解文字 ÷ 実際の練習時間</p></section>
+</aside>
+</main>
+<footer class="site-footer">昨日の自分と、少しずつ。<span>フリック日和</span></footer>
+<dialog id="helpDialog"><div class="dialog-header"><h2>練習のコツ</h2><button class="icon-button" id="closeHelp" aria-label="説明を閉じる">×</button></div><div class="help-body"><section><span class="step-number">01</span><div><h3>方向を決めてから、動かす</h3><p>基本は中央「あ」、左「い」、上「う」、右「え」、下「お」。キーを押し、指をすべらせて離します。長押しは不要です。</p></div></section><section><span class="step-number">02</span><div><h3>正解になるまで、次へ進まない</h3><p>まちがえても大丈夫。お題はそのまま残るので、正しい方向をもう一度。濁点・半濁点・小文字は、元のかなを入れて「小゛゜」を押します。「ぱ」は「は」→「ば」→「ぱ」です。</p></div></section><section><span class="step-number">03</span><div><h3>慣れたら、いつものキーボードで</h3><p>「iPhoneのキーボード」に切り替え、入力欄から日本語かなを選んでください。ひらがなで確定すると判定します。変換中の文字は採点しません。</p></div></section><div class="help-note"><b>練習キーとiPhoneの違い</b><p>この練習キーは、方向を覚えるための簡易キーボードです。補助キーや変換の動作はiPhone標準と異なります。「や」は中央や・上ゆ・下よ。「わ」は中央わ・左を・上ん・右ーです。</p><p>タイマーは一時停止できます。終了した練習をこのブラウザに保存し、別端末とは同期しません。ブラウザのデータを消すと記録も消えます。</p></div></div><button class="primary-button" id="gotIt">練習に戻る</button></dialog>
+<dialog id="resultDialog"><div class="dialog-header"><span class="section-eyebrow">PRACTICE COMPLETE</span><button class="icon-button" id="closeResult" aria-label="結果を閉じる">×</button></div><div class="result-icon" aria-hidden="true">あ</div><h2 id="resultTitle">おつかれさま！</h2><p id="resultDescription"></p><div class="result-values"><div><strong id="resultCpm">0</strong><span>正解文字 / 分</span></div><div><strong id="resultAccuracy">0<small>%</small></strong><span>正確率</span></div></div><div id="resultDetail" class="result-detail"></div><p id="resultTip"></p><button class="primary-button" id="againBtn">もう一度、練習する</button><button class="text-button" id="doneBtn">記録を見る</button></dialog>
+<dialog id="confirmDialog"><div class="dialog-header"><h2>練習を切り替えますか？</h2></div><p>途中の結果は保存されません。記録を残すには「終了して記録」を選んでください。</p><div class="confirm-actions"><button class="secondary-button" id="cancelChange">続ける</button><button class="primary-button" id="confirmChange">切り替える</button></div></dialog>
+</body></html>

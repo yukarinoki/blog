@@ -6,7 +6,7 @@ module.exports = {
       summary: ``
     },
     description: `none`,
-    siteUrl: `https://epic-golick-eb81d7.netlify.app/`,
+    siteUrl: `https://blog.yukarinoki.com`,
     pathPrefix: `/article_headers`,
     social: {}
   },
@@ -67,13 +67,13 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Gatsby Starter Blog`,
-        short_name: `GatsbyJS`,
+        name: `Blog and Works`,
+        short_name: `Index`,
         start_url: `/`,
         background_color: `#0a0e17`,
         theme_color: `#00fff2`,
         display: `minimal-ui`,
-        icon: `content/assets/profile-pic.jpg`
+        icon: `static/site-icon.svg`
       }
     },
     `gatsby-plugin-react-helmet`,

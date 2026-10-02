@@ -14,9 +14,14 @@ const HeaderInner = ({ title, className }) => {
     <header className={className}>
       <h1>
         <span className="prompt">~/blog $</span>
-        <Link to="/">{title}</Link>
+        <Link to="/blog/">{title}</Link>
         <span className="cursor">_</span>
       </h1>
+      <nav aria-label="Main navigation">
+        <Link to="/">Index</Link>
+        <Link to="/blog/">Blog</Link>
+        <Link to="/works/">Works</Link>
+      </nav>
     </header>
   )
 }
@@ -85,6 +90,7 @@ export const Header = styled(HeaderInner)`
 
   a {
     text-decoration: none;
+    &:focus { outline: 2px solid currentColor; outline-offset: 4px; }
   }
 
   @media (max-width: 640px) {
