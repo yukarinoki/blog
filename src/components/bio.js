@@ -21,24 +21,17 @@ const BioInner = ({ className }) => {
             name
             summary
           }
-          social {
-            twitter
-          }
         }
       }
     }
   `)
 
-  const { author, social } = data.site.siteMetadata
+  const { author } = data.site.siteMetadata
   return (
     <div className={className}>
       <div className="bio-label">$ whoami</div>
       <div className="bio-content">
-        <a
-          href={`https://twitter.com/${social.twitter}`}
-          target="_blank"
-          rel="external noopener"
-        >
+        <span>
           <Image
             fixed={data.avatar.childImageSharp.fixed}
             alt={author.name}
@@ -53,13 +46,10 @@ const BioInner = ({ className }) => {
               borderRadius: `50%`,
             }}
           />
-        </a>
+        </span>
         <div>
           <div>
             Written by <b>{author.name}</b> {author.summary}
-          </div>
-          <div>
-            <a href={`https://twitter.com/${social.twitter}`}>twitter</a>
           </div>
         </div>
       </div>
